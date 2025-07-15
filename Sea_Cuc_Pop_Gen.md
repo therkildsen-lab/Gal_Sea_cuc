@@ -1,0 +1,211 @@
+# Sea Cucumber
+
+
+# Brown Sea Cucumber (*Isostichopus fuscus*) Population Genomics
+
+We have sequenced 210 individuals of *I. fuscus* from various
+populations across the different bioregions of the Galapagos Archipelago
+(see map).
+
+<img src="Sampling_map.png" data-fig-align="center"
+alt="Map of brown sea cucumber sample locations across the Galapagos Archipelago" />
+
+## 1. SNP calling and PCA
+
+- All 210 samples WGS at ~25x
+
+- Sequence data processed with SnpArcher pipeline
+
+- 88 million SNPs were discovered before any filters were applied.
+
+- The GATK best practices filters (removing all indels, non-biallelic
+  SNPs, SNPs with a minor allele frequency \< 0.01, SNPs with \>75%
+  missing data, and samples with \<2x sequencing depth) were then
+  applied leaving **74180064 SNPs**.
+
+- The approximate nucleotide diversity in the sample using the Watterson
+  estimator is 1.3%.
+
+SnpArcher QC analyses revealed two outliers (samples 57 and 127) that
+correspond to unique color-morph individuals from the northern region of
+the Archipelago (red and black; first record of these color morphs for
+the Galapagos). We corroborated species identity of these two outliers
+by extracting the COI and BLAST, which called the right species *I.
+fuscus* with 99.66% identity.
+
+![Quality control PCA from SnpArcher identifying two
+outliers.](PCA_QC_Outliers.png)
+
+- After removing the two outlier samples (57 and 127) the PCA plot
+  showed three clusters. However these clusters do not follow any
+  geographical or environmental pattern. There is a substantial amount
+  of genetic variance partitioning among these clusters.
+
+  \`\`\` {#PCA PLINK2 .Bash eval=“False”} \#1 filter samples 57 and 127
+  bcftools view -s ^GAL-127,GAL-057
+  /home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_assembly_23_scaffold/cuc_new_clean_snps.vcf.gz
+  -Oz -o filtered_sample57_sample127_snps.vcf.gz
+
+  # Step 2: Convert filtered VCF to PLINK format
+
+  /programs/plink2_linux_avx2_20230721/plink2 –vcf
+  filtered_sample57_sample127_snps.vcf.gz –allow-extra-chr –autosome-num
+  95 –make-bed –set-all-var-ids @:# –out
+  filtered_sample57_sample127_polymorphic_snp_data
+
+  # Step 3: Remove duplicate variant IDs
+
+  /programs/plink2_linux_avx2_20230721/plink2 –bfile
+  /home2/jdo53/New_Assembly/PLINK2/filtered_sample57_sample127_polymorphic_snp_data  
+  –allow-extra-chr –autosome-num 95  
+  –rm-dup force-first  
+  –make-bed  
+  –out filtered_sample57_sample127_polymorphic_snp_data_dedup
+
+  # Step 5: Perform linkage pruning on the filtered dataset
+
+  # This removes SNPs in linkage disequilibrium (LD) \#updated prunning details
+
+  /programs/plink2_linux_avx2_20230721/plink2 –bfile
+  filtered_sample57_sample127_polymorphic_snp_data_dedup  
+  –allow-extra-chr –autosome-num 95  
+  –indep-pairwise 20 5 0.1  
+  –out LD_pruning_results
+
+  # Step 6: Extract only the pruned SNPs and perform PCA
+
+  /programs/plink2_linux_avx2_20230721/plink2  
+  –bfile filtered_sample57_sample127_polymorphic_snp_data_dedup  
+  –extract LD_pruning_results.prune.in  
+  –make-bed  
+  –allow-extra-chr –autosome-num 95  
+  –out filtered_sample57_sample127_LDpruned
+
+  /programs/plink2_linux_avx2_20230721/plink2  
+  –bfile filtered_sample57_sample127_LDpruned  
+  –allow-extra-chr –autosome-num 95  
+  –pca allele-wts  
+  –out final_pca_resultsLD_20_5_01 \`\`\`
+
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-1-1.png)
+
+- H: This pattern could be driven by sex determination loci.
+
+- PCA per chromosome do not show a desirnable pattern either (plots in
+  folder: PCA_Chroms)
+
+## 2. PCA Loadings
+
+- Strong loadings in many different chromosomes and concentrated across
+  various chromosomes (genome wide effect)
+
+- The first plot shows the raw loadings, and the second plot shows the
+  Squared loadings. To facilitate the visualization, the second plot
+  contain only the top 0.1% SNPs, and the 100 top-ranked SNPs are
+  colored in red. The loadings were calculated using PLINK2 with the
+  following settings –indep-pairwise 50 10 0.1 and I filtered out the
+  outlier samples (57 and 127).
+
+  ![](images/PC1_SNP_Loadings.png)
+
+  ``` r
+  ######Squared loadings#####
+  # Read SNP loadings
+  # snp_loadings <- fread("./Data/final_pca_results.eigenvec.allele", header = TRUE) |> 
+  #     select(`#CHROM`,ID,PC1,PC2) |> 
+  #     mutate(PC1_sqrd = PC1^2, 
+  #            PC2_sqrd = PC2^2)
+
+
+  ######PC1 ########
+  # Rank SNPs by squared loading and identify top 0.1% and top 100
+  # pc1_data <- snp_loadings %>%
+  #     arrange(desc(PC1_sqrd)) %>%
+  #     mutate(
+  #         Rank = row_number(),
+  #         Top_0_1_Percent = ifelse(Rank <= ceiling(0.001 * n()), TRUE, FALSE),
+  #         Top_100 = ifelse(Rank <= 100, TRUE, FALSE)
+  #     )
+  # 
+  # pc1_data <-pc1_data |> 
+  #     mutate(Chrom = str_extract(`#CHROM`, "Chr\\d+")) |> 
+  #     mutate(ID = str_extract(ID, "(?<=:)\\d+$"))
+
+
+  # Filter for top-ranked SNPs (top 0.1%)
+  # top_snps_1 <- pc1_data  |>  filter(Top_0_1_Percent)
+  # 
+  # write_csv(top_snps_1, "./Data/top_snps_1.csv")
+
+
+  top_snps_1 <- read_csv("./Data/top_snps_1.csv")
+  ```
+
+      Rows: 8904 Columns: 10
+      ── Column specification ────────────────────────────────────────────────────────
+      Delimiter: ","
+      chr (2): #CHROM, Chrom
+      dbl (6): ID, PC1, PC2, PC1_sqrd, PC2_sqrd, Rank
+      lgl (2): Top_0_1_Percent, Top_100
+
+      ℹ Use `spec()` to retrieve the full column specification for this data.
+      ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+  ``` r
+  # Prepare the data for nice plot
+
+  data <- top_snps_1 %>%
+    # Convert chromosome positions to numeric
+    mutate(
+      pos = as.numeric(ID),
+      # Extract chromosome number as numeric
+      Chrom_num = as.numeric(str_extract(Chrom, "\\d+"))
+    ) %>%
+    # Calculate cumulative positions for x-axis
+    arrange(Chrom_num, pos) %>%
+    group_by(Chrom) %>%
+    mutate(
+      # Create chromosome-specific positions
+      chr_len = max(pos),
+      # Add chromosome color grouping
+      chr_color = ifelse(Chrom_num %% 2 == 0, "gray", "black")
+    ) %>%
+    # Calculate cumulative position
+    ungroup() %>%
+    mutate(
+      bp_cum = pos + lag(cumsum(chr_len), default = 0)
+    )
+
+  # Calculate chromosome middle positions for x-axis labels
+  axis_df <- data %>%
+      group_by(Chrom) %>%
+      summarize(center = mean(bp_cum))
+
+  # Create Manhattan plot
+  ggplot(data, aes(x = bp_cum, y = PC1_sqrd)) +
+      # Add all points
+      geom_point(aes(color = chr_color), size = 1.5, alpha = 0.8) +
+      # Add top SNPs in red
+      geom_point(data = subset(data, Top_100), color = "red", size = 1.5) +
+      # Set colors for chromosomes
+      scale_color_manual(values = c("black", "gray")) +
+      # Set x-axis labels
+      scale_x_continuous(label = axis_df$Chrom, breaks = axis_df$center) +
+      #scale_y_continuous(limits = c(0.6, 1.0)) +
+      # Customize theme
+      theme_minimal() +
+      theme(
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          legend.position = "none",
+          axis.text = element_text(size = 10),
+          axis.title = element_text(size = 12)
+      ) +
+      # Add labels
+      labs(title = "Manhattan Plot of Squared Loadings (PC1)",
+          x = "Chromosomes",
+          y = expression(Squared ~ loadings ~ rho[j]^2)
+      )
+  ```
+
+  ![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-2-1.png)

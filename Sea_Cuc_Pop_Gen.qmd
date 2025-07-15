@@ -1,6 +1,6 @@
 ---
 title: "Sea Cucumber"
-format: html
+format: gfm
 editor: visual
 ---
 
@@ -72,6 +72,7 @@ SnpArcher QC analyses revealed two outliers (samples 57 and 127) that correspond
 library(tidyverse) |> suppressPackageStartupMessages()
 library(readr)
 library(dplyr)
+#devtools::install_github("petrelharp/local_pca/lostruct")
 library(lostruct)
 library(data.table)
 library(stringr)
@@ -125,30 +126,34 @@ ggplot(data = eigen_env,mapping = aes(x = PC1, y = PC2, color = Bioregion)) +
     ```{r}
     ######Squared loadings#####
     # Read SNP loadings
-    snp_loadings <- fread("./Data/final_pca_results.eigenvec.allele", header = TRUE) |> 
-        select(`#CHROM`,ID,PC1,PC2) |> 
-        mutate(PC1_sqrd = PC1^2, 
-               PC2_sqrd = PC2^2)
+    # snp_loadings <- fread("./Data/final_pca_results.eigenvec.allele", header = TRUE) |> 
+    #     select(`#CHROM`,ID,PC1,PC2) |> 
+    #     mutate(PC1_sqrd = PC1^2, 
+    #            PC2_sqrd = PC2^2)
 
 
     ######PC1 ########
     # Rank SNPs by squared loading and identify top 0.1% and top 100
-    pc1_data <- snp_loadings %>%
-        arrange(desc(PC1_sqrd)) %>%
-        mutate(
-            Rank = row_number(),
-            Top_0_1_Percent = ifelse(Rank <= ceiling(0.001 * n()), TRUE, FALSE),
-            Top_100 = ifelse(Rank <= 100, TRUE, FALSE)
-        )
-
-    pc1_data <-pc1_data |> 
-        mutate(Chrom = str_extract(`#CHROM`, "Chr\\d+")) |> 
-        mutate(ID = str_extract(ID, "(?<=:)\\d+$"))
+    # pc1_data <- snp_loadings %>%
+    #     arrange(desc(PC1_sqrd)) %>%
+    #     mutate(
+    #         Rank = row_number(),
+    #         Top_0_1_Percent = ifelse(Rank <= ceiling(0.001 * n()), TRUE, FALSE),
+    #         Top_100 = ifelse(Rank <= 100, TRUE, FALSE)
+    #     )
+    # 
+    # pc1_data <-pc1_data |> 
+    #     mutate(Chrom = str_extract(`#CHROM`, "Chr\\d+")) |> 
+    #     mutate(ID = str_extract(ID, "(?<=:)\\d+$"))
 
 
     # Filter for top-ranked SNPs (top 0.1%)
-    top_snps_1 <- pc1_data  |>  filter(Top_0_1_Percent)
+    # top_snps_1 <- pc1_data  |>  filter(Top_0_1_Percent)
+    # 
+    # write_csv(top_snps_1, "./Data/top_snps_1.csv")
 
+
+    top_snps_1 <- read_csv("./Data/top_snps_1.csv")
 
     # Prepare the data for nice plot
 
