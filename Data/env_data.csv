@@ -1,0 +1,209 @@
+﻿IID,tubo,isla,GPS_lat,GPS_lon,longitud_cm,Temperatura_fondo,profundidad_m,tipo_fondo,Macrozona,Bioregion,Region
+GAL-001,1,Isabela,-0.92962,-90.88017,27,20.1,21,Semirocoso,Isabela Sur,Central/South-eastern,South
+GAL-002,2,Isabela,-0.92962,-90.88017,25,20.1,21,Semirocoso,Isabela Sur,Central/South-eastern,South
+GAL-003,3,Isabela,-0.92962,-90.88017,27,20.1,21,Semirocoso,Isabela Sur,Central/South-eastern,South
+GAL-004,4,Isabela,-0.92962,-90.88017,32,20.1,21,Semirocoso,Isabela Sur,Central/South-eastern,South
+GAL-005,5,Isabela,-1.0501,-91.1985,27,20.7,18,Rocoso,Isabela Sur,Central/South-eastern,South
+GAL-006,6,Isabela,-1.0501,-91.1985,25,20.7,18,Rocoso,Isabela Sur,Central/South-eastern,South
+GAL-007,7,Isabela,-1.0501,-91.1985,24,20.7,18,Rocoso,Isabela Sur,Central/South-eastern,South
+GAL-008,8,Isabela,-1.0418,-91.23015,41,20.9,20,Rocoso,Isabela Sur,Central/South-eastern,South
+GAL-009,9,Isabela,-1.0418,-91.23015,33,20.9,20,Rocoso,Isabela Sur,Central/South-eastern,South
+GAL-010,10,Isabela,-1.0418,-91.23015,34,20.9,20,Rocoso,Isabela Sur,Central/South-eastern,South
+GAL-011,11,Santa Cruz,-0.583417,-90.160183,30,22,10,Roca y arena,Santa cruz Este,Central/South-eastern,South
+GAL-012,12,Santa Cruz,-0.583417,-90.160183,25,22,10,Roca y arena,Santa cruz Este,Central/South-eastern,South
+GAL-013,13,Santa Cruz,-0.583417,-90.160183,17,22,10,Roca y arena,Santa cruz Este,Central/South-eastern,South
+GAL-014,14,Santa Cruz,-0.49161,-90.32024,26.5,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-015,15,Santa Cruz,-0.583417,-90.160183,23,22,10,Roca y arena,Santa cruz Este,Central/South-eastern,South
+GAL-016,16,Santa Cruz,-0.583417,-90.160183,16.7,22,10,Roca y arena,Santa cruz Este,Central/South-eastern,South
+GAL-017,17,Santa Cruz,-0.583417,-90.160183,19,22,10,Roca y arena,Santa cruz Este,Central/South-eastern,South
+GAL-018,18,Santa Cruz,-0.583417,-90.160183,30,22,10,Roca y arena,Santa cruz Este,Central/South-eastern,South
+GAL-019,19,Santa Cruz,-0.583417,-90.160183,23,22,10,Roca y arena,Santa cruz Este,Central/South-eastern,South
+GAL-020,20,Santa Cruz,-0.49161,-90.32024,19,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-021,21,Santa Cruz,-0.49161,-90.32024,17,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-022,22,Santa Cruz,-0.49295,-90.31696,18,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-023,23,Santa Cruz,-0.49295,-90.31696,20,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-024,24,Santa Cruz,-0.4942,-90.31453,18.5,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-025,25,Santa Cruz,-0.4942,-90.31453,20,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-026,26,Santa Cruz,-0.4942,-90.31453,21,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-027,27,Santa Cruz,-0.4942,-90.31453,24,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-028,28,Santa Cruz,-0.4942,-90.31453,25.5,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-029,29,Santa Cruz,-0.4942,-90.31453,24,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-030,30,Santa Cruz,-0.4942,-90.31453,18,22.4,8,Rocoso,Santa cruz Norte,Central/South-eastern,South
+GAL-031,31,Santiago,-0.163606,-90.824127,29.5,22.5,10.8,Rocoso,Santiago Noroeste,Central/South-eastern,South
+GAL-032,32,Santiago,-0.163606,-90.824127,27,22.5,10.8,Rocoso,Santiago Noroeste,Central/South-eastern,South
+GAL-033,33,Santiago,-0.163606,-90.824127,10,22.5,10.8,Rocoso,Santiago Noroeste,Central/South-eastern,South
+GAL-034,34,Santiago,-0.163606,-90.824127,20,22.5,10.8,Rocoso,Santiago Noroeste,Central/South-eastern,South
+GAL-035,35,Santiago,-0.163606,-90.824127,16.4,22.5,10.8,Rocoso,Santiago Noroeste,Central/South-eastern,South
+GAL-036,36,Santiago,-0.163606,-90.824127,19.6,22.5,10.8,Rocoso,Santiago Noroeste,Central/South-eastern,South
+GAL-037,37,Santiago,-0.163606,-90.824127,18.5,22.5,10.8,Rocoso,Santiago Noroeste,Central/South-eastern,South
+GAL-038,38,Santiago,-0.163606,-90.824127,22,22.5,10.8,Rocoso,Santiago Noroeste,Central/South-eastern,South
+GAL-039,39,Genovesa,0.310683,-89.940617,22.4,24.3,15,Rocoso,Genovesa Sureste,Northern,North
+GAL-040,40,Genovesa,0.310683,-89.940617,21,24.3,15,Rocoso,Genovesa Sureste,Northern,North
+GAL-041,41,Genovesa,0.316333,-89.9544,19.7,23.7,7,Roca y arena,Genovesa Sureste,Northern,North
+GAL-042,42,Genovesa,0.316333,-89.9544,30,23.7,7,Roca y arena,Genovesa Sureste,Northern,North
+GAL-043,43,Genovesa,0.316333,-89.9544,28,23.7,7,Roca y arena,Genovesa Sureste,Northern,North
+GAL-044,44,Genovesa,0.316333,-89.9544,18,23.7,7,Roca y arena,Genovesa Sureste,Northern,North
+GAL-045,45,Marchena,0.38605,-90.467233,26,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-046,46,Marchena,0.38605,-90.467233,23,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-047,47,Marchena,0.38605,-90.467233,19,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-048,48,Marchena,0.38605,-90.467233,26.4,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-049,49,Marchena,0.38605,-90.467233,20.2,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-050,50,Marchena,0.38605,-90.467233,21.5,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-051,51,Marchena,0.38605,-90.467233,20.6,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-052,52,Marchena,0.38605,-90.467233,22.5,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-053,53,Marchena,0.38605,-90.467233,19.5,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-054,54,Marchena,0.38605,-90.467233,17.4,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-055,55,Marchena,0.38605,-90.467233,20.2,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-056,56,Marchena,0.38605,-90.467233,25,22.4,12,Rocoso y parches arena,Marchena Norte,Northern,North
+GAL-058,58,Pinta,0.64217,-90.77264,19.5,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-059,59,Pinta,0.64149,-90.77264,17,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-060,60,Pinta,0.64149,-90.77264,24.1,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-061,61,Pinta,0.64149,-90.77264,20.3,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-062,62,Pinta,0.64149,-90.77264,19,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-063,63,Pinta,0.64149,-90.77264,22.8,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-064,64,Pinta,0.64149,-90.77264,23,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-065,65,Pinta,0.64149,-90.77264,20,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-066,66,Pinta,0.64149,-90.77264,23.2,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-067,67,Pinta,0.64149,-90.77264,25.4,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-068,68,Pinta,0.64149,-90.77264,23,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-069,69,Pinta,0.64149,-90.77264,20,22.8,12.9,Rocoso y parches arena,Pinta Norte,Northern,North
+GAL-070,70,Isabela,0.04016,-91.51983,24.5,23.2,10,Rocoso,Isabela Oeste,Western,Western
+GAL-071,71,Isabela,0.04016,-91.51983,24.8,23.2,10,Rocoso,Isabela Oeste,Western,Western
+GAL-072,72,Isabela,0.04016,-91.51983,24,23.2,10,Rocoso,Isabela Oeste,Western,Western
+GAL-073,73,Isabela,0.04016,-91.51983,24.2,23.2,10,Rocoso,Isabela Oeste,Western,Western
+GAL-074,74,Isabela,0.04016,-91.51983,23,23.2,10,Rocoso,Isabela Oeste,Western,Western
+GAL-075,75,Isabela,0.04016,-91.51983,20,23.2,10,Rocoso,Isabela Oeste,Western,Western
+GAL-076,76,Isabela,0.04016,-91.51983,21,23.2,10,Rocoso,Isabela Oeste,Western,Western
+GAL-077,77,Isabela,0.04016,-91.51983,17,23.2,10,Rocoso,Isabela Oeste,Western,Western
+GAL-078,78,Isabela,0.04016,-91.51983,26,23.2,10,Rocoso,Isabela Oeste,Western,Western
+GAL-079,79,Isabela,0.33945,-91.32856,22,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-080,80,Isabela,0.33945,-91.32856,18.5,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-081,81,Isabela,0.33945,-91.32856,17.3,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-082,82,Floreana,-1.29065,-90.49834,22.5,18,10,Roca,Floreana Oeste y Suroeste,Central/South-eastern,South
+GAL-083,83,Floreana,-1.29962,-90.36202,20,22,13,Roca y arena,Floreana Este,Central/South-eastern,South
+GAL-084,84,Floreana,-1.1887,-90.22742,25,19,7,Roca y arena,Floreana Este,Central/South-eastern,South
+GAL-085,85,San Cristobal,-0.846913,-89.562376,29,17,18.3,Semirocoso,San Cristobal Oeste,Central/South-eastern,South
+GAL-086,86,Floreana,-1.1887,-90.22742,27,19,7,Roca y arena,Floreana Este,Central/South-eastern,South
+GAL-087,87,Wolf,1.38262,-91.81121,32,25.6,23,Rocoso y corales,Lejano Norte,Far North,North
+GAL-088,88,Santa Cruz,-0.71128,-90.51999,23,22,18.1,Roca,Santa Cruz Oeste,Central/South-eastern,South
+GAL-089,89,Floreana,-1.26172,-90.35773,22,22,6,Roca y arena,Floreana Este,Central/South-eastern,South
+GAL-090,90,Santa Cruz,-0.77758,-90.39756,16,23,9.2,Roca y arena,Santa Cruz Oeste,Central/South-eastern,South
+GAL-091,91,San Cristobal,-0.79718,-89.473602,24,17,18.3,Semirocoso,San Cristobal Oeste,Central/South-eastern,South
+GAL-092,92,Floreana,-1.26172,-90.35773,23,22,6,Roca y arena,Floreana Este,Central/South-eastern,South
+GAL-093,93,San Cristobal,-0.846913,-89.562376,29,17,18.3,Semirocoso,San Cristobal Oeste,Central/South-eastern,South
+GAL-094,94,Santa Cruz,-0.71128,-90.51999,21,22,13.13,Roca,Santa Cruz Oeste,Central/South-eastern,South
+GAL-095,95,San Cristobal,-0.79718,-89.473602,24,17,18.3,Semirocoso,San Cristobal Oeste,Central/South-eastern,South
+GAL-096,96,Floreana,-1.32023,-90.509,25,21,4,Roca y arena,Floreana Oeste y Suroeste,Central/South-eastern,South
+GAL-097,97,Santa Cruz,-0.71276,-90.50177,19.5,22,14.4,Roca,Santa Cruz Oeste,Central/South-eastern,South
+GAL-098,98,San Cristobal,-0.846913,-89.562376,30,17,18.3,Semirocoso,San Cristobal Oeste,Central/South-eastern,South
+GAL-099,99,San Cristobal,-0.954623,-89.547818,31,22,12,Rocoso,San Cristobal Sureste,Central/South-eastern,South
+GAL-100,100,wolf,1.38262,-91.81121,30,25.6,23,Rocoso y corales,Lejano Norte,Far North,North
+GAL-101,101,San Cristobal,-0.688768,-89.29737,31.5,22,18.5,Semirocoso,San Cristobal Norte,Central/South-eastern,South
+GAL-102,102,Floreana,-1.33576,-90.49946,21,19,12.2,Roca y arena,Floreana Oeste y Suroeste,Central/South-eastern,South
+GAL-103,103,Santa Cruz,-0.77758,-90.39756,18.5,23,9.2,Roca y arena,Santa Cruz Oeste,Central/South-eastern,South
+GAL-104,104,Floreana,-1.33576,-90.49946,17,19,12.2,Roca y arena,Floreana Oeste y Suroeste,Central/South-eastern,South
+GAL-105,105,San Cristobal,-0.79718,-89.473602,31,17,18.3,Semirocoso,San Cristobal Oeste,Central/South-eastern,South
+GAL-106,106,Floreana,-1.2301,-90.47202,20,23,10.1,Roca y arena,Floreana Oeste y Suroeste,Central/South-eastern,South
+GAL-107,107,Floreana,-1.24635,-90.48465,22,18,10.4,Roca y arena,Floreana Oeste y Suroeste,Central/South-eastern,South
+GAL-108,108,Espanola,-1.353273,-89.723226,28,17,10,Semirocoso,Espanola Noroeste,Central/South-eastern,South
+GAL-109,109,Santa Cruz,-0.77758,-90.39756,20,23,9.2,Roca y arena,Santa Cruz Oeste,Central/South-eastern,South
+GAL-110,110,Floreana,-1.21701,-90.27297,21,18,18,Roca y arena,Floreana Oeste y Suroeste,Central/South-eastern,South
+GAL-111,111,Espanola,-1.353273,-89.723226,34,17,10,Semirocoso,Espanola Noroeste,Central/South-eastern,South
+GAL-112,112,Santa Cruz,-0.75934,-90.43191,31.5,22,19.7,Roca y arena,Santa Cruz Oeste,Central/South-eastern,South
+GAL-113,113,Espanola,-1.37458,-89.739633,30,18,12,Rocoso,Espanola Sur,Central/South-eastern,South
+GAL-114,114,Floreana,-1.29962,-90.36202,26,22,13,Roca y arena,Floreana Este,Central/South-eastern,South
+GAL-115,115,San Cristobal,-0.688768,-89.29737,34,22,18.5,Semirocoso,San Cristobal Norte,Central/South-eastern,South
+GAL-116,116,Floreana,-1.29962,-90.36202,26,22,13,Roca y arena,Floreana Este,Central/South-eastern,South
+GAL-117,117,Espanola,-1.366953,-89.74356,33,20,14,Semirocoso,Espanola Noroeste,Central/South-eastern,South
+GAL-118,118,Santa Cruz,-0.77413,-90.37464,29,22,19.5,Roca,Santa Cruz Oeste,Central/South-eastern,South
+GAL-119,119,Isabela,0.63532,-91.09082,24.5,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-120,120,Santa Cruz,-0.77413,-90.37464,21,22,18.2,Roca,Santa Cruz Oeste,Central/South-eastern,South
+GAL-121,121,Espanola,-1.37458,-89.739633,27,18,12,Rocoso,Espanola Sur,Central/South-eastern,South
+GAL-122,122,Espanola,-1.405238,-89.66168,28,19,16,Rocoso,Espanola Sur,Central/South-eastern,South
+GAL-123,123,Isabela,0.63532,-91.09082,19,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-124,124,Espanola,-1.37458,-89.739633,31,18,12,Rocoso,Espanola Sur,Central/South-eastern,South
+GAL-125,125,Isabela,0.63532,-91.09082,16.5,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-126,126,Isabela,0.63532,-91.09082,18,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-128,128,Isabela,0.63532,-91.09082,21.5,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-129,129,Isabela,0.63532,-91.09082,16,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-130,130,Espanola,-1.366953,-89.74356,32,20,14,Semirocoso,Espanola Noroeste,Central/South-eastern,South
+GAL-131,131,Isabela,0.63532,-91.09082,18.5,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-132,132,Wolf,1.38451,-91.8127,22.3,26.5,8,rocoso y corales,Lejano Norte,Far North,North
+GAL-133,134,San Cristobal,-0.942769,-89.491956,30,20,16,Semirocoso,San Cristobal Sureste,Central/South-eastern,South
+GAL-134,135,Espanola,-1.353273,-89.723226,36,17,10,Semirocoso,Espanola Noroeste,Central/South-eastern,South
+GAL-135,136,Isabela,0.63532,-91.09082,20,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-136,137,San Cristobal,-0.709274,-89.241502,30,22,6,Semirocoso,San Cristobal Norte,Central/South-eastern,South
+GAL-137,138,Espanola,-1.405238,-89.66168,27,19,16,Rocoso,Espanola Sur,Central/South-eastern,South
+GAL-138,139,Isabela,0.63532,-91.09082,16.5,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-139,140,Isabela,0.63532,-91.09082,10.5,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-140,141,San Cristobal,-0.954623,-89.547818,28,22,12,Rocoso,San Cristobal Sureste,Central/South-eastern,South
+GAL-141,142,Espanola,-1.37458,-89.739633,27,18,12,Rocoso,Espanola Sur,Central/South-eastern,South
+GAL-142,143,Isabela,0.63532,-91.09082,15.3,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-143,144,Isabela,0.63532,-91.09082,18,21.3,10.8,Rocoso,Isabela Oeste,Western,Western
+GAL-144,145,Isabela,0.33945,-91.32856,19,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-145,146,Isabela,0.33945,-91.32856,27.2,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-146,147,San Cristobal,-0.936034,-89.605666,33,18,11,Rocoso,San Cristobal Sureste,Central/South-eastern,South
+GAL-147,148,San Cristobal,-0.942769,-89.491956,27,20,16,Semirocoso,San Cristobal Sureste,Central/South-eastern,South
+GAL-148,149,San Cristobal,-0.709274,-89.241502,31,22,6,Semirocoso,San Cristobal Norte,Central/South-eastern,South
+GAL-149,150,Isabela,0.33945,-91.32856,19,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-150,151,San Cristobal,-0.936034,-89.605666,32,18,11,Rocoso,San Cristobal Sureste,Central/South-eastern,South
+GAL-151,152,Isabela,0.33945,-91.32856,24.5,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-152,153,Espanola,-1.405238,-89.66168,24,19,16,Rocoso,Espanola Sur,Central/South-eastern,South
+GAL-153,154,San Cristobal,-0.936034,-89.605666,29,18,11,Rocoso,San Cristobal Sureste,Central/South-eastern,South
+GAL-154,155,Espanola,-1.366953,-89.74356,30,20,14,Semirocoso,Espanola Noroeste,Central/South-eastern,South
+GAL-155,156,Isabela,0.33945,-91.32856,18,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-156,157,Isabela,0.33945,-91.32856,22.3,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-157,160,Isabela,0.33945,-91.32856,24,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-158,200,Isabela,0.33945,-91.32856,17,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-159,201,Isabela,0.33945,-91.32856,20.6,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-160,202,Isabela,0.33945,-91.32856,19.4,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-161,203,Isabela,0.33945,-91.32856,17.2,22.1,12,Rocoso,Isabela Oeste,Western,Western
+GAL-162,204,Isabela,-0.0203,-91.19931,21.6,22.8,10,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-163,205,Isabela,-0.0186,-91.2077,21,22.8,10,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-164,206,Isabela,-0.01739,-91.21281,17.4,22.8,10,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-165,207,Isabela,-0.01739,-91.21281,23,22.8,10,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-166,208,Isabela,-0.01739,-91.21281,19.5,22.8,10,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-167,209,Isabela,-0.01739,-91.21281,22.3,22.8,10,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-168,210,Isabela,-0.01739,-91.21281,18.5,22.8,10,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-169,211,Isabela,-0.01739,-91.21281,24.5,22.8,10,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-170,212,Isabela,-0.01739,-91.21281,22.5,22.8,10,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-171,213,Isabela,-0.26612,-91.12972,14.3,22.8,4,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-172,214,Isabela,-0.26612,-91.12972,19,22.8,4,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-173,215,Isabela,-0.26612,-91.12972,13,22.8,4,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-174,216,Isabela,-0.26612,-91.12972,14,22.8,4,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-175,217,Isabela,-0.26612,-91.12972,17.3,22.8,4,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-176,218,Isabela,-0.26612,-91.12972,18,22.8,4,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-177,219,Isabela,-0.26612,-91.12972,14.8,22.8,4,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-178,220,Isabela,-0.26612,-91.12972,15,22.8,4,Rocoso,Isabela Este,Central/South-eastern,South
+GAL-179,221,Santiago,-0.33573,-90.77389,17,22.3,10.5,Roca y arena,Santiago Sur,Central/South-eastern,South
+GAL-180,222,Santiago,-0.33573,-90.77389,20.2,22.3,10.5,Roca y arena,Santiago Sur,Central/South-eastern,South
+GAL-181,223,Santiago,-0.33573,-90.77389,10.8,22.3,10.5,Roca y arena,Santiago Sur,Central/South-eastern,South
+GAL-182,224,Santiago,-0.33573,-90.77389,21.7,22.3,10.5,Roca y arena,Santiago Sur,Central/South-eastern,South
+GAL-183,225,Santiago,-0.33573,-90.77389,18,22.3,10.5,Roca y arena,Santiago Sur,Central/South-eastern,South
+GAL-184,226,Santiago,-0.33573,-90.77389,22,22.3,10.5,Roca y arena,Santiago Sur,Central/South-eastern,South
+GAL-185,227,Santiago,-0.33573,-90.77389,19,22.3,10.5,Roca y arena,Santiago Sur,Central/South-eastern,South
+GAL-186,228,Santiago,-0.33573,-90.77389,18.5,22.3,10.5,Roca y arena,Santiago Sur,Central/South-eastern,South
+GAL-187,229,Santiago,-0.33573,-90.77389,19.2,22.3,10.5,Roca y arena,Santiago Sur,Central/South-eastern,South
+GAL-188,230,Santiago,-0.33573,-90.77389,15,22.3,10.5,Roca y arena,Santiago Sur,Central/South-eastern,South
+GAL-189,231,Santiago,-0.33573,-90.77389,14.3,22.3,10.5,Roca y arena,Santiago Sur,Central/South-eastern,South
+GAL-190,232,Isabela,-0.654923,-90.851631,22.3,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-191,233,Isabela,-0.654923,-90.851631,21,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-192,234,Isabela,-0.654923,-90.851631,21,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-193,235,Isabela,-0.654923,-90.851631,18.5,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-194,236,Isabela,-0.654923,-90.851631,19,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-195,237,Isabela,-0.654923,-90.851631,22,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-196,238,Isabela,-0.654923,-90.851631,16.5,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-197,239,Isabela,-0.654923,-90.851631,22,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-198,240,Isabela,-0.654923,-90.851631,21,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-199,241,Isabela,-0.654923,-90.851631,19,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-200,242,Isabela,-0.654923,-90.851631,23,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-201,243,Isabela,-0.654923,-90.851631,11,22.5,5,Roca y arena,Isabela Este,Central/South-eastern,South
+GAL-202,244,Wolf,1.387,-91.8166,23,24,15,Rocoso,Lejano Norte,Far North,North
+GAL-203,245,Wolf,1.387,-91.8166,22,24,15,Rocoso,Lejano Norte,Far North,North
+GAL-204,246,Wolf,1.37978,-91.8183,29,24,15.6,Rocoso,Lejano Norte,Far North,North
+GAL-205,252,Darwin,1.68074,-91.9995,26,24,15.6,Rocoso,Lejano Norte,Far North,North
+GAL-206,253,Darwin,1.68074,-91.9995,30,24,15.6,Rocoso,Lejano Norte,Far North,North
+GAL-207,254,Darwin,1.68074,-91.9995,29,24,15.6,Rocoso,Lejano Norte,Far North,North
+GAL-208,255,Darwin,1.68074,-91.9995,35,24,15.6,Rocoso,Lejano Norte,Far North,North
+GAL-209,256,Darwin,1.68074,-91.9995,27,24,15.6,Rocoso,Lejano Norte,Far North,North
+GAL-210,257,Darwin,1.68074,-91.9995,30,24,15.6,Rocoso,Lejano Norte,Far North,North
