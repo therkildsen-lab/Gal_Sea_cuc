@@ -184,9 +184,9 @@ outliers.](PCA_QC_Outliers.png)
   # Create Manhattan plot
   ggplot(data, aes(x = bp_cum, y = PC1_sqrd)) +
       # Add all points
-      geom_point(aes(color = chr_color), size = 1.5, alpha = 0.8) +
+      geom_point(aes(color = chr_color), size = 1, alpha = 0.8) +
       # Add top SNPs in red
-      geom_point(data = subset(data, Top_100), color = "red", size = 1.5) +
+      geom_point(data = subset(data, Top_100), color = "red", size = 1) +
       # Set colors for chromosomes
       scale_color_manual(values = c("black", "gray")) +
       # Set x-axis labels
@@ -198,8 +198,8 @@ outliers.](PCA_QC_Outliers.png)
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           legend.position = "none",
-          axis.text = element_text(size = 10),
-          axis.title = element_text(size = 12)
+          axis.text.x = element_text(size = 8, angle = 90),
+          axis.title = element_text(size = 10)
       ) +
       # Add labels
       labs(title = "Manhattan Plot of Squared Loadings (PC1)",
