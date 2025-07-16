@@ -1,6 +1,18 @@
 # Sea Cucumber
 
 
+- [Brown Sea Cucumber (*Isostichopus fuscus*) Population
+  Genomics](#brown-sea-cucumber-isostichopus-fuscus-population-genomics)
+  - [1. SNP calling and PCA](#1-snp-calling-and-pca)
+  - [2. PCA Loadings](#2-pca-loadings)
+  - [4. SNP prunning](#4-snp-prunning)
+  - [5. LcWGS](#5-lcwgs)
+  - [6. LD Analysis](#6-ld-analysis)
+  - [7. Observed Heterozygosity](#7-observed-heterozygosity)
+    - [7.1 Per SNP-Heterozygosity difference between Left and Right
+      clusters](#71-per-snp-heterozygosity-difference-between-left-and-right-clusters)
+  - [8. Mean Depth per Site](#8-mean-depth-per-site)
+
 # Brown Sea Cucumber (*Isostichopus fuscus*) Population Genomics
 
 We have sequenced 210 individuals of *I. fuscus* from various
@@ -260,7 +272,7 @@ outliers.](PCA_QC_Outliers.png)
 
 ![](images/LD_random_SNPs_25K.png)
 
-# 7. Observed Heterozygosity
+## 7. Observed Heterozygosity
 
 ``` r
 #Pop info = Cluster from Global PCA (Left, Center, Right)
@@ -383,3 +395,68 @@ ggplot(het_wide_filtered, aes(x = LEFT, y = RIGHT)) +
 ![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-5-1.png)
 
 - Chromosomes 6 and 9 show distinct patterns.
+
+## 8. Mean Depth per Site
+
+``` r
+# Read the depth data from vcftools
+depth_data <- fread("Data/depth_analysis_snps_01pct.gdepth")
+
+# Get individual column names (skip CHROM and POS)
+individual_cols <- colnames(depth_data)[3:ncol(depth_data)]
+
+# Reshape to long format and join with population info
+depth_processed <- depth_data %>%
+  pivot_longer(
+    cols = all_of(individual_cols),
+    names_to = "ID", 
+    values_to = "DEPTH"
+  ) %>%
+  filter(DEPTH >= 0) %>%  # Remove missing values (-1)
+  left_join(pop_info, by = "ID") %>%
+  filter(Cluster %in% c("LEFT", "RIGHT"))  # Keep only LEFT and RIGHT
+
+# Calculate mean depth per site per population
+site_depth_summary <- depth_processed %>%
+  group_by(CHROM, POS, Cluster) %>%
+  summarise(MEAN_DEPTH = mean(DEPTH, na.rm = TRUE),
+            LENGTH = max(POS),
+            .groups = "drop")
+
+# Calculate scaffold lengths and mean depth per scaffold
+scaffold_data <- site_depth_summary %>%
+  group_by(CHROM, Cluster) %>%
+  summarise(
+    MEAN_DEPTH = mean(MEAN_DEPTH, na.rm = TRUE),
+    LENGTH = max(POS),
+    .groups = "drop"
+  )
+
+# Calculate mean depth by population
+mean_depth_by_pop <- site_depth_summary %>%
+  group_by(Cluster) %>%
+  summarise(mean_depth = mean(MEAN_DEPTH, na.rm = TRUE), .groups = "drop")
+
+# Create the plot (exactly like your attached figure)
+ggplot(site_depth_summary, aes(x = LENGTH, y = MEAN_DEPTH, color = Cluster)) +
+  geom_point(alpha = 0.7, size = 0.8) +
+  geom_hline(data = mean_depth_by_pop, aes(yintercept = mean_depth, color = Cluster),
+             linetype = "dashed", linewidth = 1) +
+  scale_x_continuous(
+    name = "Scaffold Length (bp)",
+    labels = scales::scientific
+  ) +
+  scale_y_continuous(name = "Mean Depth per Site") +
+  scale_color_manual(
+    values = c("LEFT" = "#E69F00", "RIGHT" = "#56B4E9"),
+    name = "Cluster"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top") +
+  labs(title = "Mean Depth per Site by Cluster")
+```
+
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-6-1.png)
+
+- The mean number of reads per site across a scaffold did not differ
+  significantly with scaffold length in either cluster.
