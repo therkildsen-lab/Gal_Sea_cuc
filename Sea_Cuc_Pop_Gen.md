@@ -92,7 +92,16 @@ outliers.](PCA_QC_Outliers.png)
 - H: This pattern could be driven by sex determination loci.
 
 - PCA per chromosome do not show a desirnable pattern either (plots in
-  folder: PCA_Chroms)
+  folder: PCA_Chroms).
+
+- PCA analysis per Island also show similar clustering pattern of the
+  global PCA (3 clusters).
+
+![](images/PCA_StaCruz_by_Cluster.png)
+
+![](images/PCA_Isabela_by_Cluster.png)
+
+![](images/PCA_Floreana_by_Cluster.png)
 
 ## 2. PCA Loadings
 
@@ -209,3 +218,168 @@ outliers.](PCA_QC_Outliers.png)
   ```
 
   ![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-2-1.png)
+
+  ## 
+
+  3.  SNP density per Chromosome (50Kb windows)
+
+  ![](images/SNP_density_50Kb.png)
+
+## 4. SNP prunning
+
+- Bcftools does a genome-wide pruning with 50kb windows and keeps a
+  random SNP. Heavily reduced the number of SNPs, initial clustering
+  pattern disappears.
+
+  ![](images/BCFtools_SNP_subsample_50Kb.png)
+
+- PLINK2 prunes on each chromosome and maintains an SNP even if the
+  chromosome is smaller than 50Kb. More SNPs maintain cluster pattern.
+
+  ![](images/PLINK2_SNP_subsa,ple_50Kb.png)
+
+## 5. LcWGS
+
+- To check for library prep errors, we selected a subset of samples to
+  perform LcWGS. PCA plots show similar clustering pattern, confirming
+  that WGS library prep was not contaminated.
+
+  ![](images/LcWGS_PCA.png)
+
+## 6. LD Analysis
+
+- Genome-wide LD analysis. LD was calculated for 0.1% of the top-loading
+  SNPs (N = 7049).
+
+![](images/final_LD_plot_01pct.png)
+
+- Strong LD is observed among the SNPs on each chromosome.
+
+- The cross-chromosome LD observed in high-loading SNPs is higher than
+  random genome-wide background
+
+![](images/LD_random_SNPs_25K.png)
+
+# 7. Observed Heterozygosity
+
+``` r
+#Pop info = Cluster from Global PCA (Left, Center, Right)
+pop_info <- fread("Data/sample_population_info.txt")
+
+
+# Load data
+geno <- read.table("Data/HighLoad_01pct_genotypes.tsv", header=F, stringsAsFactors=FALSE) 
+colnames(geno) <- c("CHROM", "POS", as.character(pop_info$ID))
+geno <- geno |> 
+    mutate(CHROM = str_extract(CHROM, '^[^_]+'))
+
+
+# Reshape to long format
+geno_long <- geno %>%
+    pivot_longer(
+        cols = -c(CHROM, POS),
+        names_to = "ID",
+        values_to = "GT"
+    )
+
+# Join population info
+geno_long <- geno_long %>% left_join(pop_info, by = "ID")
+
+# Define heterozygous genotypes
+is_het <- function(gt) grepl("0[|/]1|1[|/]0", gt)
+geno_long$HET <- sapply(geno_long$GT, is_het)
+
+# Calculate per-individual heterozygosity
+ind_het <- geno_long %>%
+    group_by(ID, Cluster) %>%
+    summarise(multi_locus_het = mean(HET, na.rm=TRUE), .groups = "drop")
+
+#write_csv(ind_het,"ind_het.csv")
+
+ggplot(ind_het, aes(x = Cluster, y = multi_locus_het, fill = Cluster)) +
+    geom_boxplot(outlier.shape = NA, alpha = 0.7) +
+    geom_jitter(width = 0.2, size = 2, alpha = 0.7) +
+    theme_minimal(base_size = 14) +
+    labs(
+        title = "Individual Multi-locus Heterozygosity by Cluster",
+        x = "Cluster",
+        y = "Multi-locus heterozygosity"
+    ) +
+    theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none"
+    )
+```
+
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-3-1.png)
+
+- Results for the observed heterozygosity at each cluster for the
+  high-loading SNPs, shows the highest heterozygosity observed in the
+  central cluster (possibly hermaphrodites) . Which, in case the
+  sex-driven hypothesis is true, aligns well with the logic that high
+  heterozygosity levels reflect the need to maintain genetic variation
+  for both male and female reproductive functions.
+
+### 7.1 Per SNP-Heterozygosity difference between Left and Right clusters
+
+``` r
+# Calculate per-site heterozygosity for each cluster
+het_by_cluster <- geno_long %>%
+    group_by(CHROM, POS, Cluster) %>%
+    summarise(
+        HET = sum(HET, na.rm = TRUE) / sum(!is.na(GT) & GT != "./." & GT != ".", na.rm = TRUE),
+        .groups = "drop"
+    )
+
+
+#Convert to wide format so each row is a SNP and each cluster is a column:
+    
+het_wide <- het_by_cluster %>%
+    pivot_wider(names_from = Cluster, values_from = HET)
+
+# Calculate difference (e.g., left - right)
+het_wide <- het_wide %>%
+    mutate(diff_left_right = LEFT - RIGHT)
+
+ggplot(het_wide, aes(x = POS, y = diff_left_right)) +
+    geom_point(aes(color = diff_left_right < 0), size = 0.5, alpha = 0.7) +
+    facet_wrap(~CHROM, scales = "free_x") +
+    geom_hline(yintercept = 0, linetype = "dotted", color = "red") +
+    scale_color_manual(values = c("black", "blue"), guide = "none") +
+    labs(
+        x = "Genomic Position",
+        y = "Heterozygosity Difference",
+        title = "Per-Site Heterozygosity Difference (Left - Right) by Chromosome"
+    ) +
+    theme_bw() +
+    theme(axis.text.x = element_text(size = 5))
+```
+
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-4-1.png)
+
+- Results show that the right cluster has more heterozygous SNPs than
+  the left cluster.
+
+``` r
+# Remove rows with NA in left or right
+het_wide_filtered <- het_wide %>% filter(!is.na(LEFT) & !is.na(RIGHT))
+
+# Scatter plot: left vs right cluster heterozygosity, faceted by chromosome
+ggplot(het_wide_filtered, aes(x = LEFT, y = RIGHT)) +
+  geom_point(alpha = 0.5, size = 0.7) +
+  facet_wrap(~CHROM) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
+  scale_x_continuous(limits = c(0, 1)) +
+  scale_y_continuous(limits = c(0, 1)) +
+  #coord_fixed(ratio = 1) +
+  labs(
+    x = "Per-SNP Heterozygosity in Left Cluster",
+    y = "Per-SNP Heterozygosity in Right Cluster",
+    title = "Per-SNP Heterozygosity: Left vs Right Cluster by Chromosome"
+  ) +
+  theme_bw()
+```
+
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-5-1.png)
+
+- Chromosomes 6 and 9 show distinct patterns.

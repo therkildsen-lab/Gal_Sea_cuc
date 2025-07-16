@@ -1,0 +1,209 @@
+ID	isla	Macrozona	Bioregion	Region	Cluster
+GAL-001	Isabela	Isabela Sur	Central_SE	South	LEFT
+GAL-002	Isabela	Isabela Sur	Central_SE	South	LEFT
+GAL-003	Isabela	Isabela Sur	Central_SE	South	LEFT
+GAL-004	Isabela	Isabela Sur	Central_SE	South	LEFT
+GAL-005	Isabela	Isabela Sur	Central_SE	South	LEFT
+GAL-006	Isabela	Isabela Sur	Central_SE	South	LEFT
+GAL-007	Isabela	Isabela Sur	Central_SE	South	LEFT
+GAL-008	Isabela	Isabela Sur	Central_SE	South	LEFT
+GAL-009	Isabela	Isabela Sur	Central_SE	South	LEFT
+GAL-010	Isabela	Isabela Sur	Central_SE	South	LEFT
+GAL-011	Santa Cruz	Santa cruz Este	Central_SE	South	RIGHT
+GAL-012	Santa Cruz	Santa cruz Este	Central_SE	South	LEFT
+GAL-013	Santa Cruz	Santa cruz Este	Central_SE	South	RIGHT
+GAL-014	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-015	Santa Cruz	Santa cruz Este	Central_SE	South	RIGHT
+GAL-016	Santa Cruz	Santa cruz Este	Central_SE	South	LEFT
+GAL-017	Santa Cruz	Santa cruz Este	Central_SE	South	LEFT
+GAL-018	Santa Cruz	Santa cruz Este	Central_SE	South	RIGHT
+GAL-019	Santa Cruz	Santa cruz Este	Central_SE	South	RIGHT
+GAL-020	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-021	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-022	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-023	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-024	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-025	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-026	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-027	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-028	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-029	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-030	Santa Cruz	Santa cruz Norte	Central_SE	South	LEFT
+GAL-031	Santiago	Santiago Noroeste	Central_SE	South	LEFT
+GAL-032	Santiago	Santiago Noroeste	Central_SE	South	LEFT
+GAL-033	Santiago	Santiago Noroeste	Central_SE	South	LEFT
+GAL-034	Santiago	Santiago Noroeste	Central_SE	South	LEFT
+GAL-035	Santiago	Santiago Noroeste	Central_SE	South	LEFT
+GAL-036	Santiago	Santiago Noroeste	Central_SE	South	LEFT
+GAL-037	Santiago	Santiago Noroeste	Central_SE	South	LEFT
+GAL-038	Santiago	Santiago Noroeste	Central_SE	South	LEFT
+GAL-039	Genovesa	Genovesa Sureste	Northern	North	LEFT
+GAL-040	Genovesa	Genovesa Sureste	Northern	North	RIGHT
+GAL-041	Genovesa	Genovesa Sureste	Northern	North	LEFT
+GAL-042	Genovesa	Genovesa Sureste	Northern	North	RIGHT
+GAL-043	Genovesa	Genovesa Sureste	Northern	North	RIGHT
+GAL-044	Genovesa	Genovesa Sureste	Northern	North	LEFT
+GAL-045	Marchena	Marchena Norte	Northern	North	RIGHT
+GAL-046	Marchena	Marchena Norte	Northern	North	LEFT
+GAL-047	Marchena	Marchena Norte	Northern	North	LEFT
+GAL-048	Marchena	Marchena Norte	Northern	North	LEFT
+GAL-049	Marchena	Marchena Norte	Northern	North	LEFT
+GAL-050	Marchena	Marchena Norte	Northern	North	LEFT
+GAL-051	Marchena	Marchena Norte	Northern	North	RIGHT
+GAL-052	Marchena	Marchena Norte	Northern	North	LEFT
+GAL-053	Marchena	Marchena Norte	Northern	North	LEFT
+GAL-054	Marchena	Marchena Norte	Northern	North	RIGHT
+GAL-055	Marchena	Marchena Norte	Northern	North	LEFT
+GAL-056	Marchena	Marchena Norte	Northern	North	RIGHT
+GAL-058	Pinta	Pinta Norte	Northern	North	LEFT
+GAL-059	Pinta	Pinta Norte	Northern	North	LEFT
+GAL-060	Pinta	Pinta Norte	Northern	North	RIGHT
+GAL-061	Pinta	Pinta Norte	Northern	North	LEFT
+GAL-062	Pinta	Pinta Norte	Northern	North	LEFT
+GAL-063	Pinta	Pinta Norte	Northern	North	LEFT
+GAL-064	Pinta	Pinta Norte	Northern	North	RIGHT
+GAL-065	Pinta	Pinta Norte	Northern	North	LEFT
+GAL-066	Pinta	Pinta Norte	Northern	North	LEFT
+GAL-067	Pinta	Pinta Norte	Northern	North	LEFT
+GAL-068	Pinta	Pinta Norte	Northern	North	LEFT
+GAL-069	Pinta	Pinta Norte	Northern	North	LEFT
+GAL-070	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-071	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-072	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-073	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-074	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-075	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-076	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-077	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-078	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-079	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-080	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-081	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-082	Floreana	Floreana Oeste y Suroeste	Central_SE	South	LEFT
+GAL-083	Floreana	Floreana Este	Central_SE	South	RIGHT
+GAL-084	Floreana	Floreana Este	Central_SE	South	LEFT
+GAL-085	San Cristobal	San Cristobal Oeste	Central_SE	South	LEFT
+GAL-086	Floreana	Floreana Este	Central_SE	South	LEFT
+GAL-087	Wolf	Lejano Norte	Far North	North	RIGHT
+GAL-088	Santa Cruz	Santa Cruz Oeste	Central_SE	South	LEFT
+GAL-089	Floreana	Floreana Este	Central_SE	South	LEFT
+GAL-090	Santa Cruz	Santa Cruz Oeste	Central_SE	South	LEFT
+GAL-091	San Cristobal	San Cristobal Oeste	Central_SE	South	LEFT
+GAL-092	Floreana	Floreana Este	Central_SE	South	LEFT
+GAL-093	San Cristobal	San Cristobal Oeste	Central_SE	South	LEFT
+GAL-094	Santa Cruz	Santa Cruz Oeste	Central_SE	South	LEFT
+GAL-095	San Cristobal	San Cristobal Oeste	Central_SE	South	LEFT
+GAL-096	Floreana	Floreana Oeste y Suroeste	Central_SE	South	LEFT
+GAL-097	Santa Cruz	Santa Cruz Oeste	Central_SE	South	LEFT
+GAL-098	San Cristobal	San Cristobal Oeste	Central_SE	South	LEFT
+GAL-099	San Cristobal	San Cristobal Sureste	Central_SE	South	LEFT
+GAL-100	wolf	Lejano Norte	Far North	North	LEFT
+GAL-101	San Cristobal	San Cristobal Norte	Central_SE	South	LEFT
+GAL-102	Floreana	Floreana Oeste y Suroeste	Central_SE	South	LEFT
+GAL-103	Santa Cruz	Santa Cruz Oeste	Central_SE	South	LEFT
+GAL-104	Floreana	Floreana Oeste y Suroeste	Central_SE	South	LEFT
+GAL-105	San Cristobal	San Cristobal Oeste	Central_SE	South	LEFT
+GAL-106	Floreana	Floreana Oeste y Suroeste	Central_SE	South	LEFT
+GAL-107	Floreana	Floreana Oeste y Suroeste	Central_SE	South	LEFT
+GAL-108	Espanola	Espanola Noroeste	Central_SE	South	LEFT
+GAL-109	Santa Cruz	Santa Cruz Oeste	Central_SE	South	LEFT
+GAL-110	Floreana	Floreana Oeste y Suroeste	Central_SE	South	LEFT
+GAL-111	Espanola	Espanola Noroeste	Central_SE	South	Center
+GAL-112	Santa Cruz	Santa Cruz Oeste	Central_SE	South	LEFT
+GAL-113	Espanola	Espanola Sur	Central_SE	South	LEFT
+GAL-114	Floreana	Floreana Este	Central_SE	South	LEFT
+GAL-115	San Cristobal	San Cristobal Norte	Central_SE	South	LEFT
+GAL-116	Floreana	Floreana Este	Central_SE	South	LEFT
+GAL-117	Espanola	Espanola Noroeste	Central_SE	South	LEFT
+GAL-118	Santa Cruz	Santa Cruz Oeste	Central_SE	South	LEFT
+GAL-119	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-120	Santa Cruz	Santa Cruz Oeste	Central_SE	South	LEFT
+GAL-121	Espanola	Espanola Sur	Central_SE	South	LEFT
+GAL-122	Espanola	Espanola Sur	Central_SE	South	LEFT
+GAL-123	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-124	Espanola	Espanola Sur	Central_SE	South	LEFT
+GAL-125	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-126	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-128	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-129	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-130	Espanola	Espanola Noroeste	Central_SE	South	LEFT
+GAL-131	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-132	Wolf	Lejano Norte	Far North	North	LEFT
+GAL-133	San Cristobal	San Cristobal Sureste	Central_SE	South	LEFT
+GAL-134	Espanola	Espanola Noroeste	Central_SE	South	LEFT
+GAL-135	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-136	San Cristobal	San Cristobal Norte	Central_SE	South	LEFT
+GAL-137	Espanola	Espanola Sur	Central_SE	South	LEFT
+GAL-138	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-139	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-140	San Cristobal	San Cristobal Sureste	Central_SE	South	LEFT
+GAL-141	Espanola	Espanola Sur	Central_SE	South	LEFT
+GAL-142	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-143	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-144	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-145	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-146	San Cristobal	San Cristobal Sureste	Central_SE	South	LEFT
+GAL-147	San Cristobal	San Cristobal Sureste	Central_SE	South	LEFT
+GAL-148	San Cristobal	San Cristobal Norte	Central_SE	South	LEFT
+GAL-149	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-150	San Cristobal	San Cristobal Sureste	Central_SE	South	LEFT
+GAL-151	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-152	Espanola	Espanola Sur	Central_SE	South	LEFT
+GAL-153	San Cristobal	San Cristobal Sureste	Central_SE	South	Center
+GAL-154	Espanola	Espanola Noroeste	Central_SE	South	LEFT
+GAL-155	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-156	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-157	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-158	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-159	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-160	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-161	Isabela	Isabela Oeste	Western	Western	LEFT
+GAL-162	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-163	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-164	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-165	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-166	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-167	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-168	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-169	Isabela	Isabela Este	Central_SE	South	RIGHT
+GAL-170	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-171	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-172	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-173	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-174	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-175	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-176	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-177	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-178	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-179	Santiago	Santiago Sur	Central_SE	South	LEFT
+GAL-180	Santiago	Santiago Sur	Central_SE	South	LEFT
+GAL-181	Santiago	Santiago Sur	Central_SE	South	LEFT
+GAL-182	Santiago	Santiago Sur	Central_SE	South	LEFT
+GAL-183	Santiago	Santiago Sur	Central_SE	South	LEFT
+GAL-184	Santiago	Santiago Sur	Central_SE	South	LEFT
+GAL-185	Santiago	Santiago Sur	Central_SE	South	LEFT
+GAL-186	Santiago	Santiago Sur	Central_SE	South	LEFT
+GAL-187	Santiago	Santiago Sur	Central_SE	South	LEFT
+GAL-188	Santiago	Santiago Sur	Central_SE	South	LEFT
+GAL-189	Santiago	Santiago Sur	Central_SE	South	LEFT
+GAL-190	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-191	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-192	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-193	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-194	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-195	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-196	Isabela	Isabela Este	Central_SE	South	Center
+GAL-197	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-198	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-199	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-200	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-201	Isabela	Isabela Este	Central_SE	South	LEFT
+GAL-202	Wolf	Lejano Norte	Far North	North	LEFT
+GAL-203	Wolf	Lejano Norte	Far North	North	RIGHT
+GAL-204	Wolf	Lejano Norte	Far North	North	LEFT
+GAL-205	Darwin	Lejano Norte	Far North	North	LEFT
+GAL-206	Darwin	Lejano Norte	Far North	North	LEFT
+GAL-207	Darwin	Lejano Norte	Far North	North	LEFT
+GAL-208	Darwin	Lejano Norte	Far North	North	LEFT
+GAL-209	Darwin	Lejano Norte	Far North	North	LEFT
+GAL-210	Darwin	Lejano Norte	Far North	North	LEFT
