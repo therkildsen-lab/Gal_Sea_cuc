@@ -1,8 +1,8 @@
-# Sea Cucumber
+# Sea cucumber
 
 
-- [Brown Sea Cucumber (*Isostichopus fuscus*) Population
-  Genomics](#brown-sea-cucumber-isostichopus-fuscus-population-genomics)
+- [Brown sea cucumber (*Isostichopus fuscus*) population
+  genomics](#brown-sea-cucumber-isostichopus-fuscus-population-genomics)
   - [1. SNP calling and PCA](#1-snp-calling-and-pca)
   - [2. PCA Loadings](#2-pca-loadings)
   - [4. SNP prunning](#4-snp-prunning)
@@ -13,7 +13,7 @@
       clusters](#71-per-snp-heterozygosity-difference-between-left-and-right-clusters)
   - [8. Mean Depth per Site](#8-mean-depth-per-site)
 
-# Brown Sea Cucumber (*Isostichopus fuscus*) Population Genomics
+# Brown sea cucumber (*Isostichopus fuscus*) population genomics
 
 We have sequenced 210 individuals of *I. fuscus* from various
 populations across the different bioregions of the Galapagos Archipelago
@@ -53,51 +53,31 @@ outliers.](PCA_QC_Outliers.png)
   geographical or environmental pattern. There is a substantial amount
   of genetic variance partitioning among these clusters.
 
-  \`\`\` {#PCA PLINK2 .Bash eval=“False”} \#1 filter samples 57 and 127
-  bcftools view -s ^GAL-127,GAL-057
-  /home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_assembly_23_scaffold/cuc_new_clean_snps.vcf.gz
-  -Oz -o filtered_sample57_sample127_snps.vcf.gz
+  ``` bash
+  #Step 1. filter samples 57 and 127 
 
-  # Step 2: Convert filtered VCF to PLINK format
+  bcftools view -s ^GAL-127,GAL-057 /home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_assembly_23_scaffold/cuc_new_clean_snps.vcf.gz -Oz -o filtered_sample57_sample127_snps.vcf.gz
 
-  /programs/plink2_linux_avx2_20230721/plink2 –vcf
-  filtered_sample57_sample127_snps.vcf.gz –allow-extra-chr –autosome-num
-  95 –make-bed –set-all-var-ids @:# –out
-  filtered_sample57_sample127_polymorphic_snp_data
+  #Step 2: Convert filtered VCF to PLINK format
 
-  # Step 3: Remove duplicate variant IDs
+  /programs/plink2_linux_avx2_20230721/plink2 --vcf filtered_sample57_sample127_snps.vcf.gz --allow-extra-chr --autosome-num 95 --make-bed --set-all-var-ids @:# --out filtered_sample57_sample127_polymorphic_snp_data
 
-  /programs/plink2_linux_avx2_20230721/plink2 –bfile
-  /home2/jdo53/New_Assembly/PLINK2/filtered_sample57_sample127_polymorphic_snp_data  
-  –allow-extra-chr –autosome-num 95  
-  –rm-dup force-first  
-  –make-bed  
-  –out filtered_sample57_sample127_polymorphic_snp_data_dedup
+  #Step 3: Remove duplicate variant IDs
 
-  # Step 5: Perform linkage pruning on the filtered dataset
+  /programs/plink2_linux_avx2_20230721/plink2 --bfile /home2/jdo53/New_Assembly/PLINK2/filtered_sample57_sample127_polymorphic_snp_data--allow-extra-chr --autosome-num 95--rm-dup force-first--make-bed--out filtered_sample57_sample127_polymorphic_snp_data_dedup
 
-  # This removes SNPs in linkage disequilibrium (LD) \#updated prunning details
+  #Step 5: Perform linkage pruning on the filtered dataset
 
-  /programs/plink2_linux_avx2_20230721/plink2 –bfile
-  filtered_sample57_sample127_polymorphic_snp_data_dedup  
-  –allow-extra-chr –autosome-num 95  
-  –indep-pairwise 20 5 0.1  
-  –out LD_pruning_results
+  #This removes SNPs in linkage disequilibrium (LD)
 
-  # Step 6: Extract only the pruned SNPs and perform PCA
+  /programs/plink2_linux_avx2_20230721/plink2 --bfile filtered_sample57_sample127_polymorphic_snp_data_dedup--allow-extra-chr --autosome-num 95--indep-pairwise 20 5 0.1--out LD_pruning_results
 
-  /programs/plink2_linux_avx2_20230721/plink2  
-  –bfile filtered_sample57_sample127_polymorphic_snp_data_dedup  
-  –extract LD_pruning_results.prune.in  
-  –make-bed  
-  –allow-extra-chr –autosome-num 95  
-  –out filtered_sample57_sample127_LDpruned
+  #Step 6: Extract only the pruned SNPs and perform PCA
 
-  /programs/plink2_linux_avx2_20230721/plink2  
-  –bfile filtered_sample57_sample127_LDpruned  
-  –allow-extra-chr –autosome-num 95  
-  –pca allele-wts  
-  –out final_pca_resultsLD_20_5_01 \`\`\`
+  /programs/plink2_linux_avx2_20230721/plink2 --bfile filtered_sample57_sample127_polymorphic_snp_data_dedup--extract LD_pruning_results.prune.in--make-bed--allow-extra-chr --autosome-num 95--out filtered_sample57_sample127_LDpruned
+
+  /programs/plink2_linux_avx2_20230721/plink2 --bfile filtered_sample57_sample127_LDpruned--allow-extra-chr --autosome-num 95--pca allele-wts--out final_pca_resultsLD_20_5_01 
+  ```
 
 ![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-1-1.png)
 
