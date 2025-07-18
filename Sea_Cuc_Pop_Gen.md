@@ -460,3 +460,5 @@ ggplot(site_depth_summary, aes(x = LENGTH, y = MEAN_DEPTH, color = Cluster)) +
 
 - The mean number of reads per site across a scaffold did not differ
   significantly with scaffold length in either cluster.
+- However, there is a peak of elevated coverage =\> could indicate
+  repetitive elements or duplicates.

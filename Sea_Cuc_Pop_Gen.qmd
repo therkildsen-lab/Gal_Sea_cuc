@@ -32,42 +32,43 @@ SnpArcher QC analyses revealed two outliers (samples 57 and 127) that correspond
 
 -   After removing the two outlier samples (57 and 127) the PCA plot showed three clusters. However these clusters do not follow any geographical or environmental pattern. There is a substantial amount of genetic variance partitioning among these clusters.
 
-    ``` {#PCA PLINK2 .Bash eval="False"}
-    #1 filter samples 57 and 127
-    bcftools view -s ^GAL-127,GAL-057 /home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_assembly_23_scaffold/cuc_new_clean_snps.vcf.gz -Oz -o filtered_sample57_sample127_snps.vcf.gz
+    \`\`\` {#PCA PLINK2 .Bash eval="False"} #1 filter samples 57 and 127 bcftools view -s \^GAL-127,GAL-057 /home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_assembly_23_scaffold/cuc_new_clean_snps.vcf.gz -Oz -o filtered_sample57_sample127_snps.vcf.gz
 
     # Step 2: Convert filtered VCF to PLINK format
-    /programs/plink2_linux_avx2_20230721/plink2 --vcf filtered_sample57_sample127_snps.vcf.gz --allow-extra-chr --autosome-num 95 --make-bed --set-all-var-ids @:# --out filtered_sample57_sample127_polymorphic_snp_data
+
+    /programs/plink2_linux_avx2_20230721/plink2 --vcf filtered_sample57_sample127_snps.vcf.gz --allow-extra-chr --autosome-num 95 --make-bed --set-all-var-ids \@:# --out filtered_sample57_sample127_polymorphic_snp_data
 
     # Step 3: Remove duplicate variant IDs
-    /programs/plink2_linux_avx2_20230721/plink2 --bfile /home2/jdo53/New_Assembly/PLINK2/filtered_sample57_sample127_polymorphic_snp_data \
-    --allow-extra-chr --autosome-num 95 \
-      --rm-dup force-first \
-      --make-bed \
-      --out filtered_sample57_sample127_polymorphic_snp_data_dedup
+
+    /programs/plink2_linux_avx2_20230721/plink2 --bfile /home2/jdo53/New_Assembly/PLINK2/filtered_sample57_sample127_polymorphic_snp_data\
+    --allow-extra-chr --autosome-num 95\
+    --rm-dup force-first\
+    --make-bed\
+    --out filtered_sample57_sample127_polymorphic_snp_data_dedup
 
     # Step 5: Perform linkage pruning on the filtered dataset
+
     # This removes SNPs in linkage disequilibrium (LD) #updated prunning details
-    /programs/plink2_linux_avx2_20230721/plink2 --bfile filtered_sample57_sample127_polymorphic_snp_data_dedup \
-    --allow-extra-chr --autosome-num 95 \
-          --indep-pairwise 20 5 0.1 \
-          --out LD_pruning_results
+
+    /programs/plink2_linux_avx2_20230721/plink2 --bfile filtered_sample57_sample127_polymorphic_snp_data_dedup\
+    --allow-extra-chr --autosome-num 95\
+    --indep-pairwise 20 5 0.1\
+    --out LD_pruning_results
 
     # Step 6: Extract only the pruned SNPs and perform PCA
 
-    /programs/plink2_linux_avx2_20230721/plink2 \
-      --bfile filtered_sample57_sample127_polymorphic_snp_data_dedup \
-      --extract LD_pruning_results.prune.in \
-      --make-bed \
-      --allow-extra-chr --autosome-num 95 \
-      --out filtered_sample57_sample127_LDpruned
+    /programs/plink2_linux_avx2_20230721/plink2\
+    --bfile filtered_sample57_sample127_polymorphic_snp_data_dedup\
+    --extract LD_pruning_results.prune.in\
+    --make-bed\
+    --allow-extra-chr --autosome-num 95\
+    --out filtered_sample57_sample127_LDpruned
 
-    /programs/plink2_linux_avx2_20230721/plink2 \
-      --bfile filtered_sample57_sample127_LDpruned \
-      --allow-extra-chr --autosome-num 95 \
-      --pca allele-wts \
-      --out final_pca_resultsLD_20_5_01
-    ```
+    /programs/plink2_linux_avx2_20230721/plink2\
+    --bfile filtered_sample57_sample127_LDpruned\
+    --allow-extra-chr --autosome-num 95\
+    --pca allele-wts\
+    --out final_pca_resultsLD_20_5_01 \`\`\`
 
 ```{r}
 #| label: Initial PCA
@@ -230,7 +231,8 @@ ggplot(data = eigen_env,mapping = aes(x = PC1, y = PC2, color = Bioregion)) +
     ```
 
     ## 
-    3. SNP density per Chromosome (50Kb windows)
+
+    3.  SNP density per Chromosome (50Kb windows)
 
     ![](images/SNP_density_50Kb.png)
 
@@ -438,3 +440,4 @@ ggplot(site_depth_summary, aes(x = LENGTH, y = MEAN_DEPTH, color = Cluster)) +
 ```
 
 -   The mean number of reads per site across a scaffold did not differ significantly with scaffold length in either cluster.
+-   However, there is a peak of elevated coverage =\> could indicate repetitive elements or duplicates.
