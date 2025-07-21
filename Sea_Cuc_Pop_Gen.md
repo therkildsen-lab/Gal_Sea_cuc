@@ -38,12 +38,12 @@ alt="Map of brown sea cucumber sample locations across the Galapagos Archipelago
 - The approximate nucleotide diversity in the sample using the Watterson
   estimator is 1.3%.
 
-SnpArcher QC analyses revealed two outliers (samples 57 and 127) that
-correspond to unique color-morph individuals from the northern region of
-the Archipelago (red and black; first record of these color morphs for
-the Galapagos). We corroborated species identity of these two outliers
-by extracting the COI and BLAST, which called the right species *I.
-fuscus* with 99.66% identity.
+[SnpArcher QC analyses](Data/cuc_new_qc_new.html) revealed two outliers
+(samples 57 and 127) that correspond to unique color-morph individuals
+from the northern region of the Archipelago (red and black; first record
+of these color morphs for the Galapagos). We corroborated species
+identity of these two outliers by extracting the COI and BLAST, which
+called the right species *I. fuscus* with 99.66% identity.
 
 ![Quality control PCA from SnpArcher identifying two
 outliers.](PCA_QC_Outliers.png)
