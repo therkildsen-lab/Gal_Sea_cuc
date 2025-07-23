@@ -1,0 +1,4 @@
+# config.yaml
+READS_DIR: "/home2/jdo53/snpArcher_Projects/full_210_samples/results/I_fuscus_Chromosome_filtrered_1/filtered_fastqs"  # Path to the directory containing sample folders
+OUTPUT_DIR: "/home2/jdo53/snpArcher_Projects/mtDNA/snake"  # Path to the output directory
+REF_FASTA: "final_isostichopus_fuscus_mitogenome.fasta"

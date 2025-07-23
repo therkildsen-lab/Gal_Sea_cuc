@@ -5,10 +5,12 @@
   genomics](#brown-sea-cucumber-isostichopus-fuscus-population-genomics)
   - [1. SNP calling and PCA](#1-snp-calling-and-pca)
   - [2. PCA Loadings](#2-pca-loadings)
-  - [4. SNP prunning](#4-snp-prunning)
-  - [5. LcWGS](#5-lcwgs)
-  - [6. LD Analysis](#6-ld-analysis)
-  - [7. Observed Heterozygosity](#7-observed-heterozygosity)
+  - [4. SNP density per Chromosome (50Kb
+    windows)](#4-snp-density-per-chromosome-50kb-windows)
+  - [5. SNP prunning](#5-snp-prunning)
+  - [6. LcWGS](#6-lcwgs)
+  - [7. LD Analysis](#7-ld-analysis)
+  - [8. Observed Heterozygosity](#8-observed-heterozygosity)
     - [7.1 Per SNP-Heterozygosity difference between Left and Right
       clusters](#71-per-snp-heterozygosity-difference-between-left-and-right-clusters)
   - [8. Mean Depth per Site](#8-mean-depth-per-site)
@@ -211,13 +213,40 @@ outliers.](PCA_QC_Outliers.png)
 
   ![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-2-1.png)
 
-  ## 
+  ## 3. Mitochondrial haplotype network
 
-  3.  SNP density per Chromosome (50Kb windows)
+  To investigate the pattern observed in the PCA analysis we extracted
+  the reads mapping to the mitogenome and generated a haplotype network.
 
-  ![](images/SNP_density_50Kb.png)
+1.  Map reads from fastq files to the reference mitogenome (fasta): To
+    map the fastq files to the reference mitogenome we implemented our
+    own snakemake pipeline (`Snakefile_mtDNA.smk`). The snakemake file
+    and the corresponding configuration file can be found in the
+    `scripts` folder. The pipeline outputs a fasta file for each sample.
 
-## 4. SNP prunning
+2.  Align mitogenome sequences: We aligned each of the fasta files using
+    MEGA11 to produce a Nexus file for network analysis in the software
+    `popart.`
+
+3.  Haplotype network analysis: We used `popart` with the `TCS Network`
+    algortihm for haplotype network analysis using the aligned sequences
+    in nexus format and a traits table to color the network nodes per
+    PCA cluster. The nexus file and traits table can be found in the
+    `Data` folder.
+
+![](images/mtDNA_popart_PCAclusters.png)
+
+- The mitogenome haplotype network does not show a clear separation of
+  haplotypes by PCA clustering. However, it is interesting to observe
+  that the outlier samples (yellow circles within the red square;
+  samples 57 and 127) are mapped together and showed a high divergence
+  in comparison to the other samples.
+
+## 4. SNP density per Chromosome (50Kb windows)
+
+![](images/SNP_density_50Kb.png)
+
+## 5. SNP prunning
 
 - Bcftools does a genome-wide pruning with 50kb windows and keeps a
   random SNP. Heavily reduced the number of SNPs, initial clustering
@@ -230,7 +259,7 @@ outliers.](PCA_QC_Outliers.png)
 
   ![](images/PLINK2_SNP_subsa,ple_50Kb.png)
 
-## 5. LcWGS
+## 6. LcWGS
 
 - To check for library prep errors, we selected a subset of samples to
   perform LcWGS. PCA plots show similar clustering pattern, confirming
@@ -238,7 +267,7 @@ outliers.](PCA_QC_Outliers.png)
 
   ![](images/LcWGS_PCA.png)
 
-## 6. LD Analysis
+## 7. LD Analysis
 
 - Genome-wide LD analysis. LD was calculated for 0.1% of the top-loading
   SNPs (N = 7049).
@@ -252,7 +281,7 @@ outliers.](PCA_QC_Outliers.png)
 
 ![](images/LD_random_SNPs_25K.png)
 
-## 7. Observed Heterozygosity
+## 8. Observed Heterozygosity
 
 ``` r
 #Pop info = Cluster from Global PCA (Left, Center, Right)
