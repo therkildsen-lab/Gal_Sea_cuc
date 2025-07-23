@@ -86,7 +86,7 @@ outliers.](PCA_QC_Outliers.png)
 - H: This pattern could be driven by sex determination loci.
 
 - PCA per chromosome do not show a desirnable pattern either (plots in
-  folder: [PCA_Chroms](./Gal_Sea_cuc/PCA_Chroms)).
+  folder: [PCA_Chroms](./PCA_Chroms)).
 
 - PCA analysis per Island also show similar clustering pattern of the
   global PCA (3 clusters).
