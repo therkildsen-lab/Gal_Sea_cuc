@@ -476,3 +476,290 @@ for bam in /home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_
 done
 
 ```
+
+Data processing of per sample `depth.bed` files and plotting
+
+```{r}
+#| label: BAM data preprocessing
+#| eval: false
+#| include: true
+##DATA PREPROCESSING
+#The following code requires that all depth.bed files for each sample are in a folder.
+#A table that contains the samples names/ID and population (in this case = Cluster).
+#A bed file that contains the information of the high loading SNPs.
+#Note: Since the depth.bed files are large this code is read only.
+
+library(tidyverse)
+
+# Load the cluster table (tab- or csv-separated as appropriate)
+cluster_table <- read_tsv("sample_cluster_table.txt")
+# Extract IDs for each cluster
+left_ids  <- cluster_table$ID[cluster_table$Cluster == "LEFT"]
+right_ids <- cluster_table$ID[cluster_table$Cluster == "RIGHT"]
+
+# These ID vectors will be used to aggregate per-cluster coverage
+
+# Helper: read all sample depth files and give each a unique column header
+get_depth_dfs <- function(ids) {
+  depth_files <- paste0("Depth_Bed/",ids, "_final.depth.bed")
+  # Map file to ID so each column is named for its sample
+  map2(depth_files, ids, ~read_tsv(.x, col_names = c("chr", "start", "end", .y)))
+}
+
+# Merge all by genomic window (chr, start, end)
+merge_depths <- function(depth_dfs) {
+  reduce(depth_dfs, left_join, by = c("chr", "start", "end"))
+}
+
+# Calculate per-window mean for the cluster
+compute_cluster_mean <- function(merged_df, n_samples) {
+  sample_cols <- (ncol(merged_df) - n_samples + 1):ncol(merged_df)
+  merged_df %>%
+    mutate(cluster_mean = rowMeans(select(., all_of(sample_cols)), na.rm = TRUE))
+}
+
+#left cluster
+left_depth_dfs <- get_depth_dfs(left_ids)
+left_merged <- merge_depths(left_depth_dfs)
+left_cluster <- compute_cluster_mean(left_merged, length(left_ids)) %>%
+  select(chr, start, end, left_cluster_mean = cluster_mean)
+
+#right cluster
+right_depth_dfs <- get_depth_dfs(right_ids)
+right_merged <- merge_depths(right_depth_dfs)
+right_cluster <- compute_cluster_mean(right_merged, length(right_ids)) %>%
+  select(chr, start, end, right_cluster_mean = cluster_mean)
+
+#combine
+windows_agg <- left_join(left_cluster, right_cluster, by = c("chr", "start", "end"))
+# Now each row is a window, with left/right cluster means
+
+# Read BED of windows with high-loading SNPs
+windows_snps <- read_tsv("windows_with_snps.bed", col_names = c("chr", "start", "end"))
+#write_csv(windows_snps, "windows_snps.csv")
+
+# Add a logical column indicating SNP presence to the table
+windows_agg <- windows_agg %>%
+  mutate(high_loading_window = paste(chr, start, end) %in%
+           paste(windows_snps$chr, windows_snps$start, windows_snps$end))
+
+#write_csv(windows_agg, "windows_agg.csv")
+
+```
+
+```{r}
+##BAM - MEAN PER_SITE DEPTH ANALYSIS 
+#This code requires a csv file of the preprocessed depth.bed files (see code above).
+
+windows_agg <- read_csv("Data/windows_agg.csv")
+
+#X-Y scatter plot of Right cluster vs Left cluster per-site mean depth 10Kb windows
+#Left cluster contains 187 sambles
+#Right cluster contains 18 samples
+
+windows_agg |>
+ggplot(aes(x = left_cluster_mean, y = right_cluster_mean, color = high_loading_window)) +
+  geom_point(alpha = 0.6, size = 0.7) +
+  labs(
+    x = "Mean Depth (Left Cluster)", 
+    y = "Mean Depth (Right Cluster)",
+    title = "Mean Depth per 10-kb Window"
+  ) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  scale_color_manual(values = c("black", "red"), name = "High-loading SNP") +
+  theme_minimal()
+
+```
+
+-   There is an outlier point that does not correspond to a high loading window and located in Chr20.
+
+-   We will filter out this outlier to better visualize the scatter plot.
+
+```{r}
+windows_agg |> filter(left_cluster_mean < 10000) |>
+ggplot(aes(x = left_cluster_mean, y = right_cluster_mean, color = high_loading_window)) +
+  geom_point(alpha = 0.6, size = 0.7) +
+  labs(
+    x = "Mean Depth (Left Cluster)", 
+    y = "Mean Depth (Right Cluster)",
+    title = "Mean Depth per 10-kb Window (No outlier)"
+  ) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  scale_color_manual(values = c("black", "red"), name = "High-loading SNP") +
+  theme_minimal()
+```
+
+-   Next we plot the high loading SNPs only.
+
+```{r}
+#high loading SNPs
+windows_snps <- read_csv("Data/windows_snps.csv")
+
+windows_snps_only <- semi_join(windows_agg, windows_snps, by = c("chr", "start", "end"))
+
+ggplot(windows_snps_only, aes(x = left_cluster_mean, y = right_cluster_mean)) +
+  geom_point(color = 'red', alpha = 0.8, size = 1) +
+  labs(
+    x = "Mean Depth (Left Cluster)",
+    y = "Mean Depth (Right Cluster)",
+    title = "Mean Depth per 10-kb Window (High-loading SNPs only)"
+  ) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  theme_minimal()
+
+```
+
+-   We can observe one outlier that belongs to Chr02.
+
+To facilitate the visualization of the position of the SNPs across the genome, we will create Manhattan plots of the per-site mean depth per cluster, and highlighting in red the high loading windows.
+
+First, the samples in the left cluster (187 samples).
+
+```{r}
+#Manhattan plots per-site mean depth across the genome poer cluster
+#plot all chromosomes/contigs in order
+window_lens <- windows_agg %>% group_by(chr) %>% summarise(chr_len = max(end))
+chr_offsets <- window_lens %>%
+  mutate(offset = cumsum(lag(chr_len, default=0))) %>%
+  select(chr, offset)
+
+#1. Annotate each site with genomic coordinate (for plotting)
+site_df <- windows_agg %>%
+  left_join(chr_offsets, by = "chr") %>%
+  mutate(pos_genome = start + offset)
+
+# 2. Compute chromosome boundaries (start, end, center)
+chr_boundaries <- site_df %>%
+  group_by(chr) %>%
+  summarise(chr_start = min(pos_genome, na.rm=TRUE),
+            chr_end   = max(pos_genome, na.rm=TRUE),
+            chr_center= mean(pos_genome, na.rm=TRUE)) %>%
+  arrange(chr) %>%
+  mutate(shade_grp = (row_number() %% 2 == 0)) # TRUE/FALSE for alternating color
+
+# 3. Create Manhattan plot with alternating shaded backgrounds for chromosomes
+
+ggplot(site_df, aes(x = pos_genome, y = left_cluster_mean, color = high_loading_window)) +
+  # Add rectangles: one for each chromosome, width is start to end
+  geom_rect(
+    data = chr_boundaries,
+    aes(xmin = chr_start, xmax = chr_end, ymin = -Inf, ymax = Inf, fill = shade_grp),
+    inherit.aes = FALSE, alpha = 0.1
+  ) +
+  geom_point(size = 0.5, alpha = 0.7) +
+  scale_color_manual(values = c("black", "red"), name = "High-Load Window") +
+  scale_fill_manual(values = c("grey70", "white"), guide = "none") +
+  scale_x_continuous(
+    breaks = chr_boundaries$chr_center,
+    labels = chr_boundaries$chr,
+    expand = c(0.01, 0.01)
+  ) +
+  labs(
+    x = "Chromosome",
+    y = "Mean Depth (Left Cluster)",
+    title = "Per-Site Depth - Left Cluster"
+  ) +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+```
+
+-   Again here we can clearly identify that the outlier for the Left Cluster corresponds to a window in the Chr20.
+
+We will plot again without this outlier.
+
+```{r}
+#Wihtout the outlier
+ggplot(site_df[site_df$left_cluster_mean < 10000,], aes(x = pos_genome, y = left_cluster_mean, color = high_loading_window)) +
+  # Add rectangles: one for each chromosome, width is start to end
+  geom_rect(
+    data = chr_boundaries,
+    aes(xmin = chr_start, xmax = chr_end, ymin = -Inf, ymax = Inf, fill = shade_grp),
+    inherit.aes = FALSE, alpha = 0.1
+  ) +
+  geom_point(size = 0.5, alpha = 0.5) +
+  scale_color_manual(values = c("black", "red"), name = "High-Load Window") +
+  scale_fill_manual(values = c("grey60", "white"), guide = "none") +
+  scale_x_continuous(
+    breaks = chr_boundaries$chr_center,
+    labels = chr_boundaries$chr,
+    expand = c(0.01, 0.01)
+  ) +
+  labs(
+    x = "Chromosome",
+    y = "Mean Depth (Left Cluster)",
+    title = "Per-Site Depth - Left Cluster (No outlier)"
+  ) +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+We will do the same for the right cluster (18 samples)
+
+```{r}
+#Right Cluster
+
+ggplot(site_df, aes(x = pos_genome, y = right_cluster_mean, color = high_loading_window)) +
+  # Add rectangles: one for each chromosome, width is start to end
+  geom_rect(
+    data = chr_boundaries,
+    aes(xmin = chr_start, xmax = chr_end, ymin = -Inf, ymax = Inf, fill = shade_grp),
+    inherit.aes = FALSE, alpha = 0.1
+  ) +
+  geom_point(size = 0.5, alpha = 0.7) +
+  scale_color_manual(values = c("black", "red"), name = "High-Load Window") +
+  scale_fill_manual(values = c("grey70", "white"), guide = "none") +
+  scale_x_continuous(
+    breaks = chr_boundaries$chr_center,
+    labels = chr_boundaries$chr,
+    expand = c(0.01, 0.01)
+  ) +
+  labs(
+    x = "Chromosome",
+    y = "Mean Depth (Right Cluster)",
+    title = "Per-Site Depth - Right Cluster - 18 Indiv"
+  ) +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+Without the outlier
+
+```{r}
+#Wihtout the outlier
+ggplot(site_df[site_df$right_cluster_mean < 10000,], aes(x = pos_genome, y = right_cluster_mean, color = high_loading_window)) +
+  # Add rectangles: one for each chromosome, width is start to end
+  geom_rect(
+    data = chr_boundaries,
+    aes(xmin = chr_start, xmax = chr_end, ymin = -Inf, ymax = Inf, fill = shade_grp),
+    inherit.aes = FALSE, alpha = 0.1
+  ) +
+  geom_point(size = 0.5, alpha = 0.5) +
+  scale_color_manual(values = c("black", "red"), name = "High-Load Window") +
+  scale_fill_manual(values = c("grey60", "white"), guide = "none") +
+  scale_x_continuous(
+    breaks = chr_boundaries$chr_center,
+    labels = chr_boundaries$chr,
+    expand = c(0.01, 0.01)
+  ) +
+  labs(
+    x = "Chromosome",
+    y = "Mean Depth (Right Cluster)",
+    title = "Per-Site Depth - Right Cluster (No outlier)"
+  ) +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+```
