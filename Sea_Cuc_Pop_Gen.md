@@ -13,7 +13,9 @@
   - [8. Observed Heterozygosity](#8-observed-heterozygosity)
     - [7.1 Per SNP-Heterozygosity difference between Left and Right
       clusters](#71-per-snp-heterozygosity-difference-between-left-and-right-clusters)
-  - [8. Mean Depth per Site](#8-mean-depth-per-site)
+  - [9. Mean Depth per Site (VCF)](#9-mean-depth-per-site-vcf)
+- [10. Per-site depth (raw reads - BAM
+  files)](#10-per-site-depth-raw-reads---bam-files)
 
 # Brown sea cucumber (*Isostichopus fuscus*) population genomics
 
@@ -405,7 +407,7 @@ ggplot(het_wide_filtered, aes(x = LEFT, y = RIGHT)) +
 
 - Chromosomes 6 and 9 show distinct patterns.
 
-## 8. Mean Depth per Site
+## 9. Mean Depth per Site (VCF)
 
 ``` r
 # Read the depth data from vcftools
@@ -471,3 +473,35 @@ ggplot(site_depth_summary, aes(x = LENGTH, y = MEAN_DEPTH, color = Cluster)) +
   significantly with scaffold length in either cluster.
 - However, there is a peak of elevated coverage =\> could indicate
   repetitive elements or duplicates.
+
+# 10. Per-site depth (raw reads - BAM files)
+
+Here we calculate the mean per-site depth on 10Kb windows across the
+genome using the unfiltered BAM files as input.
+
+We used `bedtools` to partition the genome in 10Kb windows and calculate
+the mean per-site depth.
+
+``` bash
+#BAM files
+/home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_assembly_23_scaffold/bams
+
+samtools view GAL-001_final.bam | head
+
+#Ref FASTA
+/home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/final_assembly_23_scaffold.fasta
+
+#1. Generate genome file (Chromosome sizes)
+samtools faidx final_assembly_23_scaffold.fasta
+cut -f1,2 final_assembly_23_scaffold.fasta.fai > final_assembly_genome.txt
+
+#2. Create 10Kb windows
+bedtools makewindows -g final_assembly_genome.txt -w 10000 > final_assembly_genome_10kb_windows.bed
+#Output columns: CHR, start, end
+
+#3. Extract Per-Window Depth for Each BAM File
+for bam in /home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_assembly_23_scaffold/bams/*.bam; do
+  sample=$(basename $bam .bam)
+  bedtools coverage -a final_assembly_genome_10kb_windows.bed -b $bam -mean > ${sample}.depth.bed
+done
+```

@@ -32,7 +32,7 @@ We have sequenced 210 individuals of *I. fuscus* from various populations across
 
 -   After removing the two outlier samples (57 and 127) the PCA plot showed three clusters. However these clusters do not follow any geographical or environmental pattern. There is a substantial amount of genetic variance partitioning among these clusters.
 
-    ``` Bash
+    ``` bash
     #Step 1. filter samples 57 and 127 
 
     bcftools view -s ^GAL-127,GAL-057 /home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_assembly_23_scaffold/cuc_new_clean_snps.vcf.gz -Oz -o filtered_sample57_sample127_snps.vcf.gz
@@ -378,7 +378,7 @@ ggplot(het_wide_filtered, aes(x = LEFT, y = RIGHT)) +
 
 -   Chromosomes 6 and 9 show distinct patterns.
 
-## 8. Mean Depth per Site
+## 9. Mean Depth per Site (VCF)
 
 ```{r}
 
@@ -441,3 +441,38 @@ ggplot(site_depth_summary, aes(x = LENGTH, y = MEAN_DEPTH, color = Cluster)) +
 
 -   The mean number of reads per site across a scaffold did not differ significantly with scaffold length in either cluster.
 -   However, there is a peak of elevated coverage =\> could indicate repetitive elements or duplicates.
+
+# 10. Per-site depth (raw reads - BAM files)
+
+Here we calculate the mean per-site depth on 10Kb windows across the genome using the unfiltered BAM files as input.
+
+We used `bedtools` to partition the genome in 10Kb windows and calculate the mean per-site depth.
+
+```{bash}
+#| label: bedtools mean depth
+#| eval: false
+#| include: true
+
+#BAM files
+/home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_assembly_23_scaffold/bams
+
+samtools view GAL-001_final.bam | head
+
+#Ref FASTA
+/home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/final_assembly_23_scaffold.fasta
+
+#1. Generate genome file (Chromosome sizes)
+samtools faidx final_assembly_23_scaffold.fasta
+cut -f1,2 final_assembly_23_scaffold.fasta.fai > final_assembly_genome.txt
+
+#2. Create 10Kb windows
+bedtools makewindows -g final_assembly_genome.txt -w 10000 > final_assembly_genome_10kb_windows.bed
+#Output columns: CHR, start, end
+
+#3. Extract Per-Window Depth for Each BAM File
+for bam in /home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_assembly_23_scaffold/bams/*.bam; do
+  sample=$(basename $bam .bam)
+  bedtools coverage -a final_assembly_genome_10kb_windows.bed -b $bam -mean > ${sample}.depth.bed
+done
+
+```
