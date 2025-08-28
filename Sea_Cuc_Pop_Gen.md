@@ -3,19 +3,22 @@
 
 - [Brown sea cucumber (*Isostichopus fuscus*) population
   genomics](#brown-sea-cucumber-isostichopus-fuscus-population-genomics)
-  - [1. SNP calling and PCA](#1-snp-calling-and-pca)
-  - [2. PCA Loadings](#2-pca-loadings)
-  - [4. SNP density per Chromosome (50Kb
-    windows)](#4-snp-density-per-chromosome-50kb-windows)
-  - [5. SNP prunning](#5-snp-prunning)
-  - [6. LcWGS](#6-lcwgs)
-  - [7. LD Analysis](#7-ld-analysis)
-  - [8. Observed Heterozygosity](#8-observed-heterozygosity)
-    - [7.1 Per SNP-Heterozygosity difference between Left and Right
-      clusters](#71-per-snp-heterozygosity-difference-between-left-and-right-clusters)
-  - [9. Mean Depth per Site (VCF)](#9-mean-depth-per-site-vcf)
-- [10. Per-site depth (raw reads - BAM
-  files)](#10-per-site-depth-raw-reads---bam-files)
+  - [1. SNP calling](#1-snp-calling)
+  - [2. PCA (full data: 27006852 SNPs)](#2-pca-full-data-27006852-snps)
+  - [3. PCA Loadings (full data)](#3-pca-loadings-full-data)
+  - [4. Mitochondrial haplotype
+    network](#4-mitochondrial-haplotype-network)
+  - [5. SNP density per Chromosome (50Kb windows - full
+    data)](#5-snp-density-per-chromosome-50kb-windows---full-data)
+  - [6. SNP prunning (Full data)](#6-snp-prunning-full-data)
+  - [7. LcWGS](#7-lcwgs)
+  - [8. LD Analysis](#8-ld-analysis)
+  - [9. Observed Heterozygosity](#9-observed-heterozygosity)
+    - [9.1 Per SNP-Heterozygosity difference between Left and Right
+      clusters](#91-per-snp-heterozygosity-difference-between-left-and-right-clusters)
+  - [10. Mean Depth per Site (VCF)](#10-mean-depth-per-site-vcf)
+- [11. Per-site depth (raw reads - BAM
+  files)](#11-per-site-depth-raw-reads---bam-files)
 
 # Brown sea cucumber (*Isostichopus fuscus*) population genomics
 
@@ -26,23 +29,48 @@ populations across the different bioregions of the Galapagos Archipelago
 <img src="Sampling_map.png" data-fig-align="center"
 alt="Map of brown sea cucumber sample locations across the Galapagos Archipelago" />
 
-## 1. SNP calling and PCA
+## 1. SNP calling
 
 - All 210 samples WGS at ~25x
 
-- Sequence data processed with SnpArcher pipeline
+- Sequence data processed with SnpArcher pipeline with the following
+  [sample table](Data/sample_210.csv),
+  [config.yaml](Data/snparcher_config.yaml) and
+  [config_slurm.yaml](Data/slurm_config.yaml)
+
+``` bash
+#Ref genome path
+/lustre1/home2/nt246_0001/jdo53/New_Assembly/FCS/CU_Ifusc_2_1.fasta
+
+#Subset only to the 23 chromosomes for snpArcher pipeline
+/programs/seqkit-0.15.0/seqkit grep -r -p "Chr0[1-9]|Chr1[0-9]|Chr2[0-3]" /lustre1/home2/nt246_0001/jdo53/New_Assembly/FCS/CU_Ifusc_2_1.fasta > /lustre1/home2/nt246_0001/jdo53/New_Assembly/FCS/CU_Ifusc_2_1_subset_23Chroms.fasta
+
+
+# Run sparcher form login node in BioHPC
+## Activate the snparcher mamba env
+source $HOME/miniforge3/bin/activate snparcher
+
+## Run the snakemake command (including flags in case the run fails partway through to not regenerate existing files)
+snakemake -s /home2/jdo53/snpArcher/workflow/Snakefile -d /home2/jdo53/snpArcher_Projects/snpArcher_CU_Ifusc_2_1 --rerun-trigger mtime --rerun-incomplete --workflow-profile /home2/jdo53/snpArcher_Projects/snpArcher_CU_Ifusc_2_1/profiles/slurm --conda-prefix /lustre1/home2/nt246_0001/jdo53/snpArcher_Projects/full_210_samples/.snakemake/conda --max-status-checks-per-second 5 -n
+```
 
 - 88 million SNPs were discovered before any filters were applied.
 
 - The GATK best practices filters (removing all indels, non-biallelic
   SNPs, SNPs with a minor allele frequency \< 0.01, SNPs with \>75%
   missing data, and samples with \<2x sequencing depth) were then
-  applied leaving **74180064 SNPs**.
+  applied leaving **74407954 SNPs**.
 
 - The approximate nucleotide diversity in the sample using the Watterson
   estimator is 1.3%.
 
-[SnpArcher QC analyses](Data/cuc_new_qc_new.html) revealed two outliers
+- The quality control analysis from SnpArcher considers randomly
+  selected SNPs within a set window size to end up with approximately
+  100k SNPs (in this QC report, 100199). These are effectively an LD
+  pruned set of SNPs. All analyses in this report are based on this set
+  of 100k SNPs.
+
+[SnpArcher QC analyses](Data/cuc_2_1_qc.html) revealed two outliers
 (samples 57 and 127) that correspond to unique color-morph individuals
 from the northern region of the Archipelago (red and black; first record
 of these color morphs for the Galapagos). We corroborated species
@@ -50,7 +78,9 @@ identity of these two outliers by extracting the COI and BLAST, which
 called the right species *I. fuscus* with 99.66% identity.
 
 ![Quality control PCA from SnpArcher identifying two
-outliers.](PCA_QC_Outliers.png)
+outliers.](Data/outliers_pca.png)
+
+## 2. PCA (full data: 27006852 SNPs)
 
 - After removing the two outlier samples (57 and 127) the PCA plot
   showed three clusters. However these clusters do not follow any
@@ -58,32 +88,24 @@ outliers.](PCA_QC_Outliers.png)
   of genetic variance partitioning among these clusters.
 
   ``` bash
-  #Step 1. filter samples 57 and 127 
+  #1 filter samples 57 and 127
+  bcftools view -s ^GAL-127,GAL-057 /lustre1/home2/nt246_0001/jdo53/snpArcher_Projects/snpArcher_CU_Ifusc_2_1/results/CU_Ifusc_2_1_subset_23Chroms/cuc_2_1_clean_snps.vcf.gz -Oz -o /lustre1/home2/nt246_0001/jdo53/CU_Ifusc_2_1_Analyses/PCA/CU_Ifusc_2_1_filtered_57_127_snps.vcf.gz
 
-  bcftools view -s ^GAL-127,GAL-057 /home2/jdo53/snpArcher_Projects/snpArcher_New_Assembly/results/final_assembly_23_scaffold/cuc_new_clean_snps.vcf.gz -Oz -o filtered_sample57_sample127_snps.vcf.gz
+  # Step 2: Convert filtered VCF to PLINK format, Assign unique IDs including alleles
+  /programs/plink2_linux_avx2_20230721/plink2 --vcf CU_Ifusc_2_1_filtered_57_127_snps.vcf.gz --allow-extra-chr --autosome-num 95 --make-bed --set-all-var-ids @:#:\$r,\$a --out CU_Ifusc_2_1_filtered_57_127_polymorphic_snp_plink
 
-  #Step 2: Convert filtered VCF to PLINK format
 
-  /programs/plink2_linux_avx2_20230721/plink2 --vcf filtered_sample57_sample127_snps.vcf.gz --allow-extra-chr --autosome-num 95 --make-bed --set-all-var-ids @:# --out filtered_sample57_sample127_polymorphic_snp_data
-
-  #Step 3: Remove duplicate variant IDs
-
-  /programs/plink2_linux_avx2_20230721/plink2 --bfile /home2/jdo53/New_Assembly/PLINK2/filtered_sample57_sample127_polymorphic_snp_data--allow-extra-chr --autosome-num 95--rm-dup force-first--make-bed--out filtered_sample57_sample127_polymorphic_snp_data_dedup
-
-  #Step 5: Perform linkage pruning on the filtered dataset
-
-  #This removes SNPs in linkage disequilibrium (LD)
-
-  /programs/plink2_linux_avx2_20230721/plink2 --bfile filtered_sample57_sample127_polymorphic_snp_data_dedup--allow-extra-chr --autosome-num 95--indep-pairwise 20 5 0.1--out LD_pruning_results
-
-  #Step 6: Extract only the pruned SNPs and perform PCA
-
-  /programs/plink2_linux_avx2_20230721/plink2 --bfile filtered_sample57_sample127_polymorphic_snp_data_dedup--extract LD_pruning_results.prune.in--make-bed--allow-extra-chr --autosome-num 95--out filtered_sample57_sample127_LDpruned
-
-  /programs/plink2_linux_avx2_20230721/plink2 --bfile filtered_sample57_sample127_LDpruned--allow-extra-chr --autosome-num 95--pca allele-wts--out final_pca_resultsLD_20_5_01 
+  # Step 3: Run PCA on filtered and biallelic only data
+  /programs/plink2_linux_avx2_20230721/plink2 --bfile CU_Ifusc_2_1_filtered_57_127_polymorphic_snp_plink_dedup \
+        --make-bed \
+        --allow-extra-chr --autosome-num 95 \
+        --pca allele-wts \
+        --out CU_Ifusc_2_1_filtered_57_127_polymorphic_snp_pca_results
   ```
 
 ![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-1-1.png)
+
+- PC 1 explains 9.12% of variance.
 
 - H: This pattern could be driven by sex determination loci.
 
@@ -99,7 +121,7 @@ outliers.](PCA_QC_Outliers.png)
 
 ![](images/PCA_Floreana_by_Cluster.png)
 
-## 2. PCA Loadings
+## 3. PCA Loadings (full data)
 
 - Strong loadings in many different chromosomes and concentrated across
   various chromosomes (genome wide effect)
@@ -107,118 +129,122 @@ outliers.](PCA_QC_Outliers.png)
 - The first plot shows the raw loadings, and the second plot shows the
   Squared loadings. To facilitate the visualization, the second plot
   contain only the top 0.1% SNPs, and the 100 top-ranked SNPs are
-  colored in red. The loadings were calculated using PLINK2 with the
-  following settings –indep-pairwise 50 10 0.1 and I filtered out the
+  colored in red. The loadings were calculated using PLINK2 PCA command
+  with the following settings `--pca allele-wts` and I filtered out the
   outlier samples (57 and 127).
 
-  ![](images/PC1_SNP_Loadings.png)
+``` r
+# Read SNP loadings for PC1
+# snp_loadings <- fread("Data/CU_Ifusc_2_1_filtered_57_127_biallelic_snp_pca_results.eigenvec.var", header = TRUE) |>
+#   select(`#CHROM`,ID,PC1) |>
+#   mutate(PC1_sqrd = PC1^2)
+# # 
+# # #prepare data
+# data <- snp_loadings %>%
+#   filter(is.finite(PC1_sqrd)) %>%
+#   mutate(Rank_unique = dense_rank(desc(PC1_sqrd))) %>%  # 1 = highest value; ties share rank, many loadings are similar
+#   mutate(
+#     Top_100 = Rank_unique <= 100,
+#     Top_0_1_Percent = row_number(desc(PC1_sqrd)) <= ceiling(0.001 * n())
+#   ) %>%
+#   arrange(Rank_unique, desc(PC1_sqrd)) %>%
+#   filter(Top_0_1_Percent) %>% # Filter for top-ranked SNPs (top 0.1%)
+#   mutate(POS = sub("^[^:]*:([^:]+).*", "\\1", ID)) # position from your ID field
+# # 
+# # #save clean DF
+# write_csv(data,"Data/top_snps_0_1.csv")
+# 
+# #save top_SNPs IDs for furhter PLINK analyses
+# top_snps <- unique(data$ID)
+# 
+# # Write SNP list for PLINK2 extraction
+# write.table(top_snps, file="top0.1pct_snps.txt", 
+#             quote=FALSE, row.names=FALSE, col.names=FALSE)
 
-  ``` r
-  ######Squared loadings#####
-  # Read SNP loadings
-  # snp_loadings <- fread("./Data/final_pca_results.eigenvec.allele", header = TRUE) |> 
-  #     select(`#CHROM`,ID,PC1,PC2) |> 
-  #     mutate(PC1_sqrd = PC1^2, 
-  #            PC2_sqrd = PC2^2)
+#load data
+top_snps_1 <- read_csv("Data/top_snps_0_1.csv",show_col_types = FALSE)
 
+# 1) Normalize minimal types, compute offsets once, cumulative position, and axis centers
+genome_df <- top_snps_1 %>%
+  transmute(
+    CHR_NUM = as.integer(`#CHROM`),           # keep numbers as provided (non-human allowed)
+    POS     = as.numeric(POS),                  
+    PC1,
+    PC1_sqrd,
+    Top_100 = as.logical(Top_100)
+  ) %>%
+  filter(!is.na(CHR_NUM), !is.na(POS)) %>%
+  arrange(CHR_NUM, POS)
 
-  ######PC1 ########
-  # Rank SNPs by squared loading and identify top 0.1% and top 100
-  # pc1_data <- snp_loadings %>%
-  #     arrange(desc(PC1_sqrd)) %>%
-  #     mutate(
-  #         Rank = row_number(),
-  #         Top_0_1_Percent = ifelse(Rank <= ceiling(0.001 * n()), TRUE, FALSE),
-  #         Top_100 = ifelse(Rank <= 100, TRUE, FALSE)
-  #     )
-  # 
-  # pc1_data <-pc1_data |> 
-  #     mutate(Chrom = str_extract(`#CHROM`, "Chr\\d+")) |> 
-  #     mutate(ID = str_extract(ID, "(?<=:)\\d+$"))
+chr_info <- genome_df %>%
+  group_by(CHR_NUM) %>%
+  summarise(chr_len = max(POS, na.rm = TRUE), .groups = "drop") %>%
+  arrange(CHR_NUM) %>%
+  mutate(offset = lag(cumsum(chr_len), default = 0))
 
+df_cum <- genome_df %>%
+  left_join(chr_info, by = "CHR_NUM") %>%
+  mutate(
+    pos_cum  = POS + offset,
+    bg_group = CHR_NUM %% 2           # alternate two colors by chromosome
+  )
 
-  # Filter for top-ranked SNPs (top 0.1%)
-  # top_snps_1 <- pc1_data  |>  filter(Top_0_1_Percent)
-  # 
-  # write_csv(top_snps_1, "./Data/top_snps_1.csv")
+axis_df <- df_cum %>%
+  group_by(CHR_NUM) %>%
+  summarise(center = (min(pos_cum) + max(pos_cum)) / 2, .groups = "drop")
 
+# 2) Plot PC1 along genome (alternating grey/blue)
+p_pc1 <- ggplot(df_cum, aes(x = pos_cum, y = PC1)) +
+  geom_point(aes(color = factor(bg_group)), alpha = 0.6, size = 0.2, show.legend = FALSE) +
+  scale_color_manual(values = c("0" = "grey70", "1" = "#2C7FB8")) +
+  scale_x_continuous(breaks = axis_df$center, labels = axis_df$CHR_NUM,
+                     expand = expansion(mult = c(0.001, 0.01))) +
+  labs(title = "Genome-wide SNP subset of 0.1% loadings for PC1 (N=54014)",
+       x = "Chromosomes", y = "PC1 loading") +
+  theme_minimal(base_size = 11) +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
 
-  top_snps_1 <- read_csv("./Data/top_snps_1.csv")
-  ```
+p_pc1
+```
 
-      Rows: 8904 Columns: 10
-      ── Column specification ────────────────────────────────────────────────────────
-      Delimiter: ","
-      chr (2): #CHROM, Chrom
-      dbl (6): ID, PC1, PC2, PC1_sqrd, PC2_sqrd, Rank
-      lgl (2): Top_0_1_Percent, Top_100
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-2-1.png)
 
-      ℹ Use `spec()` to retrieve the full column specification for this data.
-      ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+``` r
+# 3) Manhattan of squared loadings with Top_100 in red and a simple legend
+p_sq <- ggplot(df_cum, aes(x = pos_cum, y = PC1_sqrd)) +
+  geom_point(aes(color = factor(bg_group)), alpha = 0.5, size = 1.2, show.legend = FALSE) +
+  scale_color_manual(values = c("0" = "grey70", "1" = "#2C7FB8"), guide = "none") +
+  geom_point(
+    data = dplyr::filter(df_cum, Top_100),
+    aes(shape = "Top 100 loadings"),
+    color = "red3", alpha = 0.9, size = 1.6, show.legend = TRUE
+  ) +
+  scale_shape_manual(
+    values = c("Top 100 loadings" = 16),
+    breaks = "Top 100 loadings",
+    name = NULL,
+    guide = guide_legend(override.aes = list(color = "red3", size = 3))
+  ) +
+  scale_x_continuous(breaks = axis_df$center, labels = axis_df$CHR_NUM,
+                     expand = expansion(mult = c(0.001, 0.01))) +
+  labs(title = "Squared loadings subset of 0.1% loadings for PC1 (N=54014)",
+       x = "Chromosomes",
+       y = expression(Squared ~ loadings ~ rho[j]^2)) +
+  theme_minimal(base_size = 11) +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        legend.position = "top")
 
-  ``` r
-  # Prepare the data for nice plot
+p_sq
+```
 
-  data <- top_snps_1 %>%
-    # Convert chromosome positions to numeric
-    mutate(
-      pos = as.numeric(ID),
-      # Extract chromosome number as numeric
-      Chrom_num = as.numeric(str_extract(Chrom, "\\d+"))
-    ) %>%
-    # Calculate cumulative positions for x-axis
-    arrange(Chrom_num, pos) %>%
-    group_by(Chrom) %>%
-    mutate(
-      # Create chromosome-specific positions
-      chr_len = max(pos),
-      # Add chromosome color grouping
-      chr_color = ifelse(Chrom_num %% 2 == 0, "gray", "black")
-    ) %>%
-    # Calculate cumulative position
-    ungroup() %>%
-    mutate(
-      bp_cum = pos + lag(cumsum(chr_len), default = 0)
-    )
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-3-1.png)
 
-  # Calculate chromosome middle positions for x-axis labels
-  axis_df <- data %>%
-      group_by(Chrom) %>%
-      summarize(center = mean(bp_cum))
+## 4. Mitochondrial haplotype network
 
-  # Create Manhattan plot
-  ggplot(data, aes(x = bp_cum, y = PC1_sqrd)) +
-      # Add all points
-      geom_point(aes(color = chr_color), size = 1, alpha = 0.8) +
-      # Add top SNPs in red
-      geom_point(data = subset(data, Top_100), color = "red", size = 1) +
-      # Set colors for chromosomes
-      scale_color_manual(values = c("black", "gray")) +
-      # Set x-axis labels
-      scale_x_continuous(label = axis_df$Chrom, breaks = axis_df$center) +
-      #scale_y_continuous(limits = c(0.6, 1.0)) +
-      # Customize theme
-      theme_minimal() +
-      theme(
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          legend.position = "none",
-          axis.text.x = element_text(size = 8, angle = 90),
-          axis.title = element_text(size = 10)
-      ) +
-      # Add labels
-      labs(title = "Manhattan Plot of Squared Loadings (PC1)",
-          x = "Chromosomes",
-          y = expression(Squared ~ loadings ~ rho[j]^2)
-      )
-  ```
-
-  ![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-2-1.png)
-
-  ## 3. Mitochondrial haplotype network
-
-  To investigate the pattern observed in the PCA analysis we extracted
-  the reads mapping to the mitogenome and generated a haplotype network.
+To investigate the pattern observed in the PCA analysis we extracted the
+reads mapping to the mitogenome and generated a haplotype network.
 
 1.  Map reads from fastq files to the reference mitogenome (fasta): To
     map the fastq files to the reference mitogenome we implemented our
@@ -244,24 +270,257 @@ outliers.](PCA_QC_Outliers.png)
   samples 57 and 127) are mapped together and showed a high divergence
   in comparison to the other samples.
 
-## 4. SNP density per Chromosome (50Kb windows)
+## 5. SNP density per Chromosome (50Kb windows - full data)
 
-![](images/SNP_density_50Kb.png)
+``` r
+suppressPackageStartupMessages({
+  library(data.table)
+  library(dplyr)
+  library(ggplot2)
+  library(scales)
+  library(grid)
+})
 
-## 5. SNP prunning
+# 1) Read BED with window counts
+bed_file <- "Data/snp_density_50kb.bed"  # chrom  start  end  count
+
+dens <- fread(bed_file, col.names = c("chrom","start","end","count"),
+              na.strings = c(".", "NA", "")) %>%
+  mutate(
+    chrom = as.character(chrom),
+    start = as.numeric(start),
+    end   = as.numeric(end),
+    count = as.numeric(count)
+  )
+
+# Replace missing counts with 0 and clean rows
+dens$count[is.na(dens$count)] <- 0
+dens <- dens %>% filter(!is.na(chrom), !is.na(start), !is.na(end), end > start)
+
+# Aggregate duplicate windows, if any
+dens <- dens %>%
+  group_by(chrom, start, end) %>%
+  summarise(count = sum(count, na.rm = TRUE), .groups = "drop")
+
+# Midpoints and Mb coordinates
+dens <- dens %>%
+  mutate(
+    mid_Mb = (start + end)/2 / 1e6,
+    xminMb = start/1e6,
+    xmaxMb = end/1e6
+  )
+
+# Global x range (same for all facets)
+x_min <- 0
+x_max <- max(dens$xmaxMb, na.rm = TRUE)
+
+# Keep chromosome order as in file
+chrom_levels <- unique(dens$chrom)
+dens$chrom <- factor(dens$chrom, levels = chrom_levels)
+
+# 2A) Plot as rectangles (recommended for dense windows)
+p_rect <- ggplot(dens) +
+  geom_rect(
+    aes(xmin = xminMb, xmax = xmaxMb, ymin = 0, ymax = count),
+    fill = "#5A8DCB", color = NA
+  ) +
+  facet_grid(chrom~., scales = "free_y") +   # FIXED x, free y
+  scale_x_continuous(limits = c(x_min, x_max), expand = c(0, 0),
+                     breaks = pretty_breaks(n = 6)) +
+  labs(
+    title = "SNP Density Across Chromosomes (50 kb windows)",
+    x = "Chromosomal Position (Mb)",
+    y = "SNP Count"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    strip.text = element_text(face = "bold"),
+    panel.spacing.y = unit(0.12, "lines")
+  )
+
+p_rect
+```
+
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-4-1.png)
+
+## 6. SNP prunning (Full data)
+
+``` bash
+#Workdir
+/lustre1/home2/nt246_0001/jdo53/CU_Ifusc_2_1_Analyses/PCA_subsampled_data
+
+#VCF file
+/lustre1/home2/nt246_0001/jdo53/CU_Ifusc_2_1_Analyses/PCA/CU_Ifusc_2_1_filtered_57_127_snps.vcf.gz
+
+#PLINK2 formatted VCF file (27006852 variants)
+/lustre1/home2/nt246_0001/jdo53/CU_Ifusc_2_1_Analyses/PCA/CU_Ifusc_2_1_filtered_57_127_polymorphic_snp_plink
+
+# Subsample SNPs to retain 1 SNP per 50 Kb
+
+/programs/plink2_linux_avx2_20230721/plink2 --bfile /lustre1/home2/nt246_0001/jdo53/CU_Ifusc_2_1_Analyses/PCA/CU_Ifusc_2_1_filtered_57_127_polymorphic_snp_plink \
+       --bp-space 50000 \
+       --allow-extra-chr \
+       --make-bed --out subsampled_filtered_sorted_s57_s127_snps
+#16816 remaining
+
+# Run PCA on PLINK filtered data
+/programs/plink2_linux_avx2_20230721/plink2 --bfile subsampled_filtered_sorted_s57_s127_snps --pca 10 --allow-extra-chr --out pca_subsampled_plink2_s57_s127_snps
+       
+ #Use bcftools to subsample
+ 
+#bcftools keep only 551 SNPs
+
+bcftools +prune \
+    --nsites-per-win 1 \
+    --nsites-per-win-mode 1st \
+    -w 50000 \
+    -Oz \
+    -o pruned_50Kb_filtered_sorted_s57_s127_snps.vcf.gz \
+    filtered_sorted_s57_s127_snps.vcf.gz
+
+
+#check number of SNPs
+bcftools view -H pruned_50Kb_filtered_sorted_s57_s127_snps.vcf.gz | wc -l
+#551 SNPs
+
+
+#Convert BCFTOOLS filtered VCF to PLINK format
+/programs/plink2_linux_avx2_20230721/plink2 --vcf pruned_50Kb_filtered_sorted_s57_s127_snps.vcf.gz --allow-extra-chr --autosome-num 95 --make-bed --out pruned_bcftools50Kb_s57_s127_snps
+
+#Run PCA on BCFTOOLS filtered data
+/programs/plink2_linux_avx2_20230721/plink2 --bfile pruned_bcftools50Kb_s57_s127_snps --pca 10 --allow-extra-chr --autosome-num 95 --out pruned_bcftools50Kb_s57_s127_snps_pca
+```
+
+``` r
+#######PCA BCFTOOLS Pruned 50Kb ##########
+library(readr)
+# read in result files
+eigenValues_bcf <- read_delim("Data/random_bcftools50Kb_filtered_sorted_s57_s127_snps_pca.eigenval", delim = " ", col_names = F)
+```
+
+    Rows: 10 Columns: 1
+    ── Column specification ────────────────────────────────────────────────────────
+    Delimiter: " "
+    dbl (1): X1
+
+    ℹ Use `spec()` to retrieve the full column specification for this data.
+    ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+eigenVectors_bcf <- read_delim("Data/random_bcftools50Kb_filtered_sorted_s57_s127_snps_pca.eigenvec", delim = "\t", col_names = T)
+```
+
+    Rows: 208 Columns: 12
+    ── Column specification ────────────────────────────────────────────────────────
+    Delimiter: "\t"
+    chr  (1): IID
+    dbl (11): #FID, PC1, PC2, PC3, PC4, PC5, PC6, PC7, PC8, PC9, PC10
+
+    ℹ Use `spec()` to retrieve the full column specification for this data.
+    ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+## Proportion of variation captured by each vector
+eigen_percent_bcf <- round((eigenValues_bcf / (sum(eigenValues_bcf))*100), 2)
+
+eigen_env_bcf <- left_join(eigenVectors_bcf, env_data, by = "IID")
+
+#write_csv(eigenVectors, "pruned_bcftools50Kb_filtered_sorted_s57_s127_snps_pca.csv")
+
+# PCA plot
+ggplot(data = eigen_env_bcf,mapping = aes(x = PC1, y = PC2, color = Bioregion)) +
+    geom_point(size = 3, show.legend = T ) +
+    geom_hline(yintercept = 0, linetype="dotted") +
+    #geom_text(hjust=0, vjust=0, aes(label=`#IID`)) +
+    geom_vline(xintercept = 0, linetype="dotted") +
+    theme(legend.position="right") +
+    labs(title = "Subsampled bcftools W-50Kb (551 SNPs)",
+         x = paste0("Principal component 1 (",eigen_percent_bcf[1,1]," %)"),
+         y = paste0("Principal component 2 (",eigen_percent_bcf[2,1]," %)"))+ #,
+    #colour = "Goat breeds", shape = "Goat breeds") +
+    theme_minimal()
+```
+
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-5-1.png)
 
 - Bcftools does a genome-wide pruning with 50kb windows and keeps a
-  random SNP. Heavily reduced the number of SNPs, initial clustering
-  pattern disappears.
+  random SNP. Heavily reduced the number of SNPs (N = 551), initial
+  clustering pattern disappears.
 
-  ![](images/BCFtools_SNP_subsample_50Kb.png)
+  ``` r
+  #######PCA PLINK2 Pruned 50Kb ##########
+  library(readr)
+  # read in result files
+  eigenValues <- read_delim("Data/pca_subsampled_plink2_s57_s127_snps.eigenval", delim = " ", col_names = F)
+  ```
+
+      Rows: 10 Columns: 1
+      ── Column specification ────────────────────────────────────────────────────────
+      Delimiter: " "
+      dbl (1): X1
+
+      ℹ Use `spec()` to retrieve the full column specification for this data.
+      ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+  ``` r
+  eigenVectors <- read_delim("Data/pca_subsampled_plink2_s57_s127_snps.eigenvec", delim = "\t", col_names = T)
+  ```
+
+      Rows: 208 Columns: 12
+      ── Column specification ────────────────────────────────────────────────────────
+      Delimiter: "\t"
+      chr  (1): IID
+      dbl (11): #FID, PC1, PC2, PC3, PC4, PC5, PC6, PC7, PC8, PC9, PC10
+
+      ℹ Use `spec()` to retrieve the full column specification for this data.
+      ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+  ``` r
+  ## Proportion of variation captured by each vector
+  eigen_percent <- round((eigenValues / (sum(eigenValues))*100), 2)
+
+  env_data <- read_csv("./Data/env_data.csv")
+  ```
+
+      Rows: 208 Columns: 12
+      ── Column specification ────────────────────────────────────────────────────────
+      Delimiter: ","
+      chr (6): IID, isla, tipo_fondo, Macrozona, Bioregion, Region
+      dbl (6): tubo, GPS_lat, GPS_lon, longitud_cm, Temperatura_fondo, profundidad_m
+
+      ℹ Use `spec()` to retrieve the full column specification for this data.
+      ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+  ``` r
+  eigen_env <- left_join(eigenVectors, env_data, by = "IID")
+
+
+
+  #write_csv(eigenVectors, "subsampled_plink2_filtered_sorted_s57_s127_snps_pca.csv")
+
+  # PCA plot
+  ggplot(data = eigen_env,mapping = aes(x = PC1, y = PC2, color = Bioregion)) +
+      geom_point(size = 3, show.legend = T ) +
+      geom_hline(yintercept = 0, linetype="dotted") +
+      #geom_text(hjust=0, vjust=0, aes(label=`#IID`)) +
+      geom_vline(xintercept = 0, linetype="dotted") +
+      theme(legend.position="right") +
+      labs(title = "Subsampled PLINK2 W-50Kb (16816 SNPs)",
+           x = paste0("Principal component 1 (",eigen_percent[1,1]," %)"),
+           y = paste0("Principal component 2 (",eigen_percent[2,1]," %)"))+ #,
+      #colour = "Goat breeds", shape = "Goat breeds") +
+      theme_minimal()
+  ```
+
+  ![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-6-1.png)
 
 - PLINK2 prunes on each chromosome and maintains an SNP even if the
-  chromosome is smaller than 50Kb. More SNPs maintain cluster pattern.
+  chromosome is smaller than 50Kb (SNPs = 16816). More SNPs maintain
+  cluster pattern.
 
-  ![](images/PLINK2_SNP_subsa,ple_50Kb.png)
-
-## 6. LcWGS
+## 7. LcWGS
 
 - To check for library prep errors, we selected a subset of samples to
   perform LcWGS. PCA plots show similar clustering pattern, confirming
@@ -269,7 +528,7 @@ outliers.](PCA_QC_Outliers.png)
 
   ![](images/LcWGS_PCA.png)
 
-## 7. LD Analysis
+## 8. LD Analysis
 
 - Genome-wide LD analysis. LD was calculated for 0.1% of the top-loading
   SNPs (N = 7049).
@@ -283,7 +542,7 @@ outliers.](PCA_QC_Outliers.png)
 
 ![](images/LD_random_SNPs_25K.png)
 
-## 8. Observed Heterozygosity
+## 9. Observed Heterozygosity
 
 ``` r
 #Pop info = Cluster from Global PCA (Left, Center, Right)
@@ -334,7 +593,7 @@ ggplot(ind_het, aes(x = Cluster, y = multi_locus_het, fill = Cluster)) +
     )
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-3-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-7-1.png)
 
 - Results for the observed heterozygosity at each cluster for the
   high-loading SNPs, shows the highest heterozygosity observed in the
@@ -343,7 +602,7 @@ ggplot(ind_het, aes(x = Cluster, y = multi_locus_het, fill = Cluster)) +
   heterozygosity levels reflect the need to maintain genetic variation
   for both male and female reproductive functions.
 
-### 7.1 Per SNP-Heterozygosity difference between Left and Right clusters
+### 9.1 Per SNP-Heterozygosity difference between Left and Right clusters
 
 ``` r
 # Calculate per-site heterozygosity for each cluster
@@ -378,7 +637,7 @@ ggplot(het_wide, aes(x = POS, y = diff_left_right)) +
     theme(axis.text.x = element_text(size = 5))
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-4-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-8-1.png)
 
 - Results show that the right cluster has more heterozygous SNPs than
   the left cluster.
@@ -403,11 +662,11 @@ ggplot(het_wide_filtered, aes(x = LEFT, y = RIGHT)) +
   theme_bw()
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-5-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-9-1.png)
 
 - Chromosomes 6 and 9 show distinct patterns.
 
-## 9. Mean Depth per Site (VCF)
+## 10. Mean Depth per Site (VCF)
 
 ``` r
 # Read the depth data from vcftools
@@ -467,14 +726,14 @@ ggplot(site_depth_summary, aes(x = LENGTH, y = MEAN_DEPTH, color = Cluster)) +
   labs(title = "Mean Depth per Site by Cluster")
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-6-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-10-1.png)
 
 - The mean number of reads per site across a scaffold did not differ
   significantly with scaffold length in either cluster.
 - However, there is a peak of elevated coverage =\> could indicate
   repetitive elements or duplicates.
 
-# 10. Per-site depth (raw reads - BAM files)
+# 11. Per-site depth (raw reads - BAM files)
 
 Here we calculate the mean per-site depth on 10Kb windows across the
 genome using the unfiltered BAM files as input.
@@ -607,7 +866,7 @@ ggplot(aes(x = left_cluster_mean, y = right_cluster_mean, color = high_loading_w
   theme_minimal()
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-7-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-11-1.png)
 
 - There is an outlier point that does not correspond to a high loading
   window and located in Chr20.
@@ -628,7 +887,7 @@ ggplot(aes(x = left_cluster_mean, y = right_cluster_mean, color = high_loading_w
   theme_minimal()
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-8-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-12-1.png)
 
 - Next we plot the high loading SNPs only.
 
@@ -660,7 +919,7 @@ ggplot(windows_snps_only, aes(x = left_cluster_mean, y = right_cluster_mean)) +
   theme_minimal()
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-9-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-13-1.png)
 
 - We can observe one outlier that belongs to Chr02.
 
@@ -720,7 +979,7 @@ ggplot(site_df, aes(x = pos_genome, y = left_cluster_mean, color = high_loading_
         axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-10-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-14-1.png)
 
 - Again here we can clearly identify that the outlier for the Left
   Cluster corresponds to a window in the Chr20.
@@ -755,7 +1014,7 @@ ggplot(site_df[site_df$left_cluster_mean < 10000,], aes(x = pos_genome, y = left
         axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-11-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-15-1.png)
 
 We will do the same for the right cluster (18 samples)
 
@@ -788,7 +1047,7 @@ ggplot(site_df, aes(x = pos_genome, y = right_cluster_mean, color = high_loading
         axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-12-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-16-1.png)
 
 Without the outlier
 
@@ -820,4 +1079,4 @@ ggplot(site_df[site_df$right_cluster_mean < 10000,], aes(x = pos_genome, y = rig
         axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-13-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-17-1.png)
