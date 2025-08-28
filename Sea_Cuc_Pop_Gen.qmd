@@ -242,6 +242,11 @@ p_sq <- ggplot(df_cum, aes(x = pos_cum, y = PC1_sqrd)) +
 
 p_sq
 
+
+# August 28 To DO: ##
+#NOW make a Manhattan plot but color by LD value or whether each SNP surpasses an LD threshold
+
+# Also make a PCA plot of Chromosome 21, 22, 3 for the top loading SNPs and also Manhattan plots for each chromosome (full data or subsample 1 in a thousand)
 ```
 
 ## 4. Mitochondrial haplotype network
