@@ -96,11 +96,12 @@ outliers.](Data/outliers_pca.png)
 
 
   # Step 3: Run PCA on filtered and biallelic only data
-  /programs/plink2_linux_avx2_20230721/plink2 --bfile CU_Ifusc_2_1_filtered_57_127_polymorphic_snp_plink_dedup \
+  /programs/plink2_linux_avx2_20230721/plink2 --bfile CU_Ifusc_2_1_filtered_57_127_polymorphic_snp_plink \
+  --snps-only just-acgt --max-alleles 2 \
         --make-bed \
         --allow-extra-chr --autosome-num 95 \
-        --pca allele-wts \
-        --out CU_Ifusc_2_1_filtered_57_127_polymorphic_snp_pca_results
+        --pca biallelic-var-wts 20 \
+        --out CU_Ifusc_2_1_filtered_57_127_biallelic_snp_pca_results
   ```
 
 ![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-1-1.png)
@@ -135,10 +136,10 @@ outliers.](Data/outliers_pca.png)
 
 ``` r
 # Read SNP loadings for PC1
-# snp_loadings <- fread("Data/CU_Ifusc_2_1_filtered_57_127_biallelic_snp_pca_results.eigenvec.var", header = TRUE) |>
+# snp_loadings <- fread("/Users/jaimeortiz/Library/CloudStorage/Box-Box/0_PhD_NINA/WildGenome/SEA_CUCUMBER/CU_Ifusc_2_1_Analyses/PCA_raw_data/CU_Ifusc_2_1_filtered_57_127_biallelic_snp_pca_results.eigenvec.var", header = TRUE) |>
 #   select(`#CHROM`,ID,PC1) |>
 #   mutate(PC1_sqrd = PC1^2)
-# # 
+# #
 # # #prepare data
 # data <- snp_loadings %>%
 #   filter(is.finite(PC1_sqrd)) %>%
@@ -150,7 +151,7 @@ outliers.](Data/outliers_pca.png)
 #   arrange(Rank_unique, desc(PC1_sqrd)) %>%
 #   filter(Top_0_1_Percent) %>% # Filter for top-ranked SNPs (top 0.1%)
 #   mutate(POS = sub("^[^:]*:([^:]+).*", "\\1", ID)) # position from your ID field
-# # 
+# #
 # # #save clean DF
 # write_csv(data,"Data/top_snps_0_1.csv")
 # 
@@ -158,7 +159,7 @@ outliers.](Data/outliers_pca.png)
 # top_snps <- unique(data$ID)
 # 
 # # Write SNP list for PLINK2 extraction
-# write.table(top_snps, file="top0.1pct_snps.txt", 
+# write.table(top_snps, file="top0.1pct_snps.txt",
 #             quote=FALSE, row.names=FALSE, col.names=FALSE)
 
 #load data
@@ -530,10 +531,154 @@ ggplot(data = eigen_env_bcf,mapping = aes(x = PC1, y = PC2, color = Bioregion)) 
 
 ## 8. LD Analysis
 
-- Genome-wide LD analysis. LD was calculated for 0.1% of the top-loading
-  SNPs (N = 7049).
+``` r
+#Final LD Plot 0.1 pct
 
-![](images/final_LD_plot_01pct.png)
+
+library(tidyverse)
+library(viridis)
+
+#########
+
+library(data.table)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(forcats)
+install.packages('R.utils')
+library(ComplexHeatmap)
+library(circlize)
+library(data.table)
+library(stringr)
+library(Matrix)
+
+# Load the filtered LD results
+ld_data <- fread("interchr_ld_r2_0p2_top0p1.ld.gz")
+
+# For genome-wide: get all unique SNPs
+all_snps <- sort(unique(c(ld_data$SNP_A, ld_data$SNP_B)))
+
+# Map SNPs to indices for the matrix
+snp_idx <- setNames(seq_along(all_snps), all_snps)
+ld_data[, idx_A := snp_idx[SNP_A]]
+ld_data[, idx_B := snp_idx[SNP_B]]
+
+# Assume ld_data has columns: SNP_A, SNP_B, R2, idx_A, idx_B
+# Only keep upper triangle (idx_A < idx_B)
+ld_upper <- ld_data[idx_A < idx_B]
+
+# Create a numeric sparse matrix (dgCMatrix)
+mat <- sparseMatrix(
+  i = ld_upper$idx_A,
+  j = ld_upper$idx_B,
+  x = ld_upper$R2,
+  dims = c(length(all_snps), length(all_snps)),
+  dimnames = list(all_snps, all_snps)
+)
+
+mat_dense <- as.matrix(mat)
+
+# --- 1. Symmetrize the LD Matrix ---
+# Assumes 'mat' (sparse upper-triangle) and 'all_snps' are in your R environment
+mat_full <- mat_dense + t(mat_dense)
+diag(mat_full) <- 1
+
+# --- 2. Subsample the Matrix for a Readable Plot ---
+# Adjust the 'by' value if needed to make the plot more or less dense
+sub_idx <- seq(1, nrow(mat_full), by = 100)
+mat_sub_full <- as.matrix(mat_full[sub_idx, sub_idx])
+
+# --- 3. Prepare Chromosome Annotations and Factors ---
+# Create an ordered factor for chromosome splits to ensure natural sorting
+chr_info_sub <- data.frame(snp_name = all_snps[sub_idx])
+chr_info_sub$chr <- sub(":.*", "", chr_info_sub$snp_name)
+chr_levels <- stringr::str_sort(unique(chr_info_sub$chr), numeric = TRUE)
+chr_factor <- factor(chr_info_sub$chr, levels = chr_levels)
+
+# --- 4. Define Annotations with Correct Label Rotation ---
+# Annotation for the rows (Y-axis) with HORIZONTAL labels
+left_anno <- rowAnnotation(
+  block = anno_block(
+    gp = gpar(fill = c("#F0F0F0", "#E0E0E0"), col = "black"),
+    labels = chr_levels,
+    labels_gp = gpar(col = "black", fontsize = 8, fontface = "bold"),
+    labels_rot = 0 # Explicitly set rotation to 0 degrees for horizontal text
+  ),
+  width = unit(2, "cm")
+)
+
+# Annotation for the columns (X-axis) with VERTICAL labels
+top_anno <- HeatmapAnnotation(
+  block = anno_block(
+    gp = gpar(fill = c("#F0F0F0", "#E0E0E0"), col = "black"),
+    labels = chr_levels,
+    labels_gp = gpar(col = "black", fontsize = 8, fontface = "bold"),
+    labels_rot = 90 # Keep rotation at 90 degrees for vertical text
+  ),
+  height = unit(2, "cm")
+)
+
+# --- 5. Define the High-Contrast Color Scheme ---
+# This palette makes high r-squared values stand out
+# col_fun <- colorRamp2(
+#   c(0, 0.2, 0.5, 0.8, 1.0),
+#   c("white", "#d1e5f0", "#fdae61", "#f46d43", "#d73027")
+# )
+
+# Create a color function that has more detail for r^2 > 0
+col_fun <- colorRamp2(
+  c(0, 0.05, 0.2, 0.4, 0.6, 0.8, 1.0), # Breakpoints
+  c("#F5F5F5", "#ffe9ec", "orange", "yellow", "green", "blue", "darkblue") # Colors
+)
+
+
+# --- 6. Generate the Final Heatmap ---
+# Step 1: Create the Heatmap object
+ht_final <- Heatmap(
+  mat_sub_full,
+  name = "r2",
+  col = col_fun,
+  
+  # Split the heatmap into blocks by chromosome
+  row_split = chr_factor,
+  column_split = chr_factor,
+  
+  # Add the text and block annotations
+  left_annotation = left_anno,
+  top_annotation = top_anno,
+  
+  # General aesthetics and performance settings
+  show_row_names = FALSE,
+  show_column_names = FALSE,
+  cluster_rows = FALSE,
+  cluster_columns = FALSE,
+  row_title = NULL,
+  column_title = NULL,
+  use_raster = TRUE, # Essential for performance with large matrices
+  raster_quality = 5,
+  
+  # Customize the legend
+  heatmap_legend_param = list(
+    title = expression(r^2),
+    at = c(0, 0.2, 0.5, 0.8, 1.0),
+    legend_height = unit(6, "cm")
+  )
+)
+
+# Step 2: Draw the final plot and add a global title
+draw(
+  ht_final,
+  column_title = "Genome-Wide Linkage Disequilibrium of High-Loading SNPs",
+  column_title_gp = gpar(fontsize = 16, fontface = "bold")
+)
+```
+
+![](Data/LD_analysis_plot.png)
+
+- Genome-wide LD analysis. LD was calculated for 0.1% of the top-loading
+  SNPs (N = 27007).
+
+<!-- -->
 
 - Strong LD is observed among the SNPs on each chromosome.
 
@@ -593,7 +738,7 @@ ggplot(ind_het, aes(x = Cluster, y = multi_locus_het, fill = Cluster)) +
     )
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-7-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-8-1.png)
 
 - Results for the observed heterozygosity at each cluster for the
   high-loading SNPs, shows the highest heterozygosity observed in the
@@ -637,7 +782,7 @@ ggplot(het_wide, aes(x = POS, y = diff_left_right)) +
     theme(axis.text.x = element_text(size = 5))
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-8-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-9-1.png)
 
 - Results show that the right cluster has more heterozygous SNPs than
   the left cluster.
@@ -662,7 +807,7 @@ ggplot(het_wide_filtered, aes(x = LEFT, y = RIGHT)) +
   theme_bw()
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-9-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-10-1.png)
 
 - Chromosomes 6 and 9 show distinct patterns.
 
@@ -726,7 +871,7 @@ ggplot(site_depth_summary, aes(x = LENGTH, y = MEAN_DEPTH, color = Cluster)) +
   labs(title = "Mean Depth per Site by Cluster")
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-10-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-11-1.png)
 
 - The mean number of reads per site across a scaffold did not differ
   significantly with scaffold length in either cluster.
@@ -866,7 +1011,7 @@ ggplot(aes(x = left_cluster_mean, y = right_cluster_mean, color = high_loading_w
   theme_minimal()
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-11-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-12-1.png)
 
 - There is an outlier point that does not correspond to a high loading
   window and located in Chr20.
@@ -887,7 +1032,7 @@ ggplot(aes(x = left_cluster_mean, y = right_cluster_mean, color = high_loading_w
   theme_minimal()
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-12-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-13-1.png)
 
 - Next we plot the high loading SNPs only.
 
@@ -919,7 +1064,7 @@ ggplot(windows_snps_only, aes(x = left_cluster_mean, y = right_cluster_mean)) +
   theme_minimal()
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-13-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-14-1.png)
 
 - We can observe one outlier that belongs to Chr02.
 
@@ -979,7 +1124,7 @@ ggplot(site_df, aes(x = pos_genome, y = left_cluster_mean, color = high_loading_
         axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-14-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-15-1.png)
 
 - Again here we can clearly identify that the outlier for the Left
   Cluster corresponds to a window in the Chr20.
@@ -1014,7 +1159,7 @@ ggplot(site_df[site_df$left_cluster_mean < 10000,], aes(x = pos_genome, y = left
         axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-15-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-16-1.png)
 
 We will do the same for the right cluster (18 samples)
 
@@ -1047,7 +1192,7 @@ ggplot(site_df, aes(x = pos_genome, y = right_cluster_mean, color = high_loading
         axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-16-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-17-1.png)
 
 Without the outlier
 
@@ -1079,4 +1224,4 @@ ggplot(site_df[site_df$right_cluster_mean < 10000,], aes(x = pos_genome, y = rig
         axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-17-1.png)
+![](Sea_Cuc_Pop_Gen_files/figure-commonmark/unnamed-chunk-18-1.png)
