@@ -457,6 +457,20 @@ ggplot(data = eigen_env_bcf,mapping = aes(x = PC1, y = PC2, color = Bioregion)) 
 
 ## 8. LD Analysis
 
+``` bash
+#extract high loading snps
+/programs/plink2_linux_avx2_20230721/plink2 --bfile /lustre1/home2/nt246_0001/jdo53/CU_Ifusc_2_1_Analyses/PCA/CU_Ifusc_2_1_filtered_57_127_polymorphic_snp_plink \
+--extract top0.1pct_snps.txt \
+--snps-only just-acgt --max-alleles 2 \
+--make-bed \
+--allow-extra-chr --autosome-num 95 \
+--out subset_top0p1
+
+
+#USING PLINK1.9 for LD since PLINK2 needs to be updated in BioHPC
+/programs/plink-1.9-x86_64-beta7/plink --bfile subset_top0p1 --r2 inter-chr with-freqs gz --ld-window-r2 0.2 --out interchr_ld_r2_0p2_top0p1
+```
+
 ```{r}
 #| eval: false
 #| include: true
