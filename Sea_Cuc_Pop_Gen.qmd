@@ -249,6 +249,89 @@ p_sq
 # Also make a PCA plot of Chromosome 21, 22, 3 for the top loading SNPs and also Manhattan plots for each chromosome (full data or subsample 1 in a thousand)
 ```
 
+```{r}
+#PCA high loadings Chroms 3, 21, 22
+
+eigenValues <- read_delim("./Data/high_load_snps_chr3_pca.eigenval", delim = " ", col_names = F)
+
+eigenVectors <- read_delim("./Data/high_load_snps_chr3_pca.eigenvec", delim = "\t", col_names = T)
+
+env_data <- read_csv("./Data/env_data.csv")
+
+## Proportion of variation captured by each vector
+eigen_percent <- round((eigenValues / (sum(eigenValues))*100), 2)
+
+eigen_env <- left_join(eigenVectors, env_data, by = "IID")
+
+#Plot PCA
+ggplot(data = eigen_env,mapping = aes(x = PC1, y = PC2, color = PC_Cluster)) +
+    geom_point(size = 2, alpha=0.7,show.legend = T ) +
+    geom_hline(yintercept = 0, linetype="dotted") +
+    #geom_text(hjust=0, vjust=0,aes(label=IID)) +
+    geom_vline(xintercept = 0, linetype="dotted") +
+    theme(legend.position="right") +
+    labs(title = "PCA Chr 3 - high loading variants (N = 2096)",
+         x = paste0("Principal component 1 (",eigen_percent[1,1]," %)"),
+         y = paste0("Principal component 2 (",eigen_percent[2,1]," %)"))+
+    theme_minimal()
+
+
+```
+
+```{r}
+#PCA high loadings Chroms 21
+
+eigenValues <- read_delim("./Data/high_load_snps_chr21_pca.eigenval", delim = " ", col_names = F)
+
+eigenVectors <- read_delim("./Data/high_load_snps_chr21_pca.eigenvec", delim = "\t", col_names = T)
+
+env_data <- read_csv("./Data/env_data.csv")
+
+## Proportion of variation captured by each vector
+eigen_percent <- round((eigenValues / (sum(eigenValues))*100), 2)
+
+eigen_env <- left_join(eigenVectors, env_data, by = "IID")
+
+#Plot PCA
+ggplot(data = eigen_env,mapping = aes(x = PC1, y = PC2, color = PC_Cluster)) +
+    geom_point(size = 2, alpha=0.7,show.legend = T ) +
+    geom_hline(yintercept = 0, linetype="dotted") +
+    #geom_text(hjust=0, vjust=0,aes(label=IID)) +
+    geom_vline(xintercept = 0, linetype="dotted") +
+    theme(legend.position="right") +
+    labs(title = "PCA Chr 21 - high loading variants (N = 4618)",
+         x = paste0("Principal component 1 (",eigen_percent[1,1]," %)"),
+         y = paste0("Principal component 2 (",eigen_percent[2,1]," %)"))+
+    theme_minimal()
+```
+
+```{r}
+#PCA high loadings Chroms 22
+
+eigenValues <- read_delim("./Data/high_load_snps_chr22_pca.eigenval", delim = " ", col_names = F)
+
+eigenVectors <- read_delim("./Data/high_load_snps_chr22_pca.eigenvec", delim = "\t", col_names = T)
+
+env_data <- read_csv("./Data/env_data.csv")
+
+## Proportion of variation captured by each vector
+eigen_percent <- round((eigenValues / (sum(eigenValues))*100), 2)
+
+eigen_env <- left_join(eigenVectors, env_data, by = "IID")
+
+#Plot PCA
+ggplot(data = eigen_env,mapping = aes(x = PC1, y = PC2, color = PC_Cluster)) +
+    geom_point(size = 2, alpha=0.7,show.legend = T ) +
+    geom_hline(yintercept = 0, linetype="dotted") +
+    #geom_text(hjust=0, vjust=0,aes(label=IID)) +
+    geom_vline(xintercept = 0, linetype="dotted") +
+    theme(legend.position="right") +
+    labs(title = "PCA Chr 22 - high loading variants (N = 2016)",
+         x = paste0("Principal component 1 (",eigen_percent[1,1]," %)"),
+         y = paste0("Principal component 2 (",eigen_percent[2,1]," %)"))+
+    theme_minimal()
+```
+
 ## 4. Mitochondrial haplotype network
 
 To investigate the pattern observed in the PCA analysis we extracted the reads mapping to the mitogenome and generated a haplotype network.
