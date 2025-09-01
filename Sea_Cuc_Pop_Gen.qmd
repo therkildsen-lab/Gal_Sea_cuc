@@ -707,14 +707,108 @@ draw(
 ![](Data/LD_analysis_plot.png)
 
 -   Genome-wide LD analysis. LD was calculated for 0.1% of the top-loading SNPs (N = 27007).
-
-<!-- -->
-
 -   Strong LD is observed among the SNPs on each chromosome.
-
 -   The cross-chromosome LD observed in high-loading SNPs is higher than random genome-wide background
 
 ![](images/LD_random_SNPs_25K.png)
+
+## 8.1 LD chromosomes 3, 21, 22 - Full data
+
+``` bash
+#workdir 
+/lustre1/home2/nt246_0001/jdo53/CU_Ifusc_2_1_Analyses/LD_per_Chr
+
+#Plink file for genome
+/lustre1/home2/nt246_0001/jdo53/CU_Ifusc_2_1_Analyses/PCA/CU_Ifusc_2_1_filtered_57_127_polymorphic_snp_plink
+
+
+#Create plink files for each chromosome
+# Edit this to your base dataset prefix (BED/BIM/FAM)
+BASE=/lustre1/home2/nt246_0001/jdo53/CU_Ifusc_2_1_Analyses/PCA/CU_Ifusc_2_1_filtered_57_127_polymorphic_snp_plink
+
+for c in 3 21 22; do
+/programs/plink2_linux_avx2_20230721/plink2 \
+    --bfile "${BASE}" \
+    --chr ${c} \
+    --snps-only just-acgt --max-alleles 2 \
+    --make-bed \
+    --out chr${c}_subset
+done
+
+#Intra‑chromosomal LD with PLINK 1.9
+#Compute within‑chromosome r² in sliding windows (here 1 Mb) and write compressed LD pair lists with positions for plotting; set --ld-window-r2 0 to keep all pairs in the window, or raise it (e.g., 0.2) for lighter output.
+
+for c in 3 21 22; do
+/programs/plink-1.9-x86_64-beta7/plink \
+    --bfile chr${c}_subset \
+    --r2 with-freqs gz \
+    --ld-window-kb 1000 --ld-window 999999 --ld-window-r2 0.2 \
+    --out chr${c}_ld1mb
+done
+```
+
+```{r}
+#| label: LD_per_chromosome
+#| eval: false
+#| include: true
+#LD per chromosome
+setwd("/home2/jdo53/CU_Ifusc_2_1_Analyses/LD_per_Chr")
+
+suppressPackageStartupMessages({ library(data.table); library(ggplot2); library(scales) })
+
+#plot_local_ld <- function(ld_path, out_png, chr_label, local_window_kb = 100) {
+plot_local_ld <- function(ld_path, chr_label, local_window_kb = 100) {
+  if (!file.exists(ld_path)) stop(sprintf("LD file not found: %s", ld_path))
+  # Read .ld or .ld.gz
+  cmd <- if (grepl("\\.gz$", ld_path)) sprintf("zcat %s", shQuote(ld_path)) else ld_path
+  dt <- fread(cmd = cmd)
+  if (nrow(dt) == 0) stop("LD file is empty; re-run PLINK with --r2 with-freqs and nonzero windows.")
+  # Standardize names to lower case and verify expected columns
+  setnames(dt, tolower(names(dt)))
+  need <- c("chr_a","bp_a","snp_a","chr_b","bp_b","snp_b","r2")
+  if (!all(need %in% names(dt))) stop("Missing columns in LD file; ensure PLINK 1.9 --r2 with-freqs output.")
+  # Within-chromosome and local window
+  dt <- dt[chr_a == chr_b]
+  dt[, dist := abs(bp_b - bp_a)]
+  dt <- dt[dist <= local_window_kb*1000]
+  a <- dt[, .(SNP = snp_a, BP = bp_a, r2 = r2)]
+  b <- dt[, .(SNP = snp_b, BP = bp_b, r2 = r2)]
+  long <- rbind(a, b)
+  per <- long[, .(BP = max(BP), localMeanR2 = mean(r2, na.rm=TRUE), maxR2 = max(r2, na.rm=TRUE), N = .N), by = SNP]
+  setorder(per, BP)
+  
+  p <- ggplot(per, aes(x = BP, y = localMeanR2, color = maxR2)) +
+    geom_point(size = 0.6, alpha = 0.9) +
+    scale_color_gradientn(
+      colours = c("#00007F","#0000FF","#007FFF","#00FFFF","#7FFF00","#FFFF00","#FF7F00","#FF0000"),
+      limits = c(0,1), oob = squish, name = expression(max~r^2)
+    ) +
+    labs(
+      title = sprintf("Mean r² (%dkb) — %s", local_window_kb, chr_label),
+      x = "Position (bp)", y = expression(Mean~r^2)
+    ) +
+    theme_minimal(base_size = 12) +
+    theme(panel.grid.minor = element_blank(), legend.key.height = unit(36,"pt"), plot.title = element_text(face="bold"))
+  print(p)
+  #ggsave(out_png, p, width = 10, height = 5, dpi = 300) #this is to save plot as png
+}
+
+# Correct calls with the filenames produced by the earlier PLINK commands
+# plot_local_ld("chr3_ldpairs_1mb.ld.gz",  "Chr3_localLD.png",  "Chr3") #this is the correct way if using the function to also save as png
+# plot_local_ld("chr21_ldpairs_1mb.ld.gz", "Chr21_localLD.png", "Chr21")
+# plot_local_ld("chr22_ldpairs_1mb.ld.gz", "Chr22_localLD.png", "Chr22")
+
+plot_local_ld("chr3_ld1mb.ld.gz", "Chr3") #this is only to view ggplot
+plot_local_ld("chr21_ld1mb.ld.gz", "Chr21")
+plot_local_ld("chr22_ld1mb.ld.gz", "Chr22")
+
+```
+
+![](images/LD_r2_chrom3_manhattan.png)
+
+![](images/LD_r2_chrom21_manhattan.png)
+
+![](images/LD_r2_chrom22_manhattan.png)
 
 ## 9. Observed Heterozygosity
 
