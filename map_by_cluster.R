@@ -7,7 +7,8 @@ library(ggrepel)
 #setwd("/Users/jaimeortiz/Library/CloudStorage/Box-Box/0_PhD_NINA/WildGenome/SEA_CUCUMBER")
 
 # Read the CSV file
-data <- read.csv("/Users/jaimeortiz/Library/CloudStorage/Box-Box/0_PhD_NINA/WildGenome/SEA_CUCUMBER/GAL_MAINLAND_Analysis/new_combined_gal_mainland_no_57_127_pca_env_data.csv",header=T)
+data <- read.csv("/Users/jaimeortiz/Library/CloudStorage/Box-Box/0_PhD_NINA/WildGenome/SEA_CUCUMBER/GAL_MAINLAND_Analysis/new_combined_gal_mainland_pop_data.csv",header=T) |> 
+  filter(!IID %in% c("GAL-057","GAL-127","GAL-225")) #remove outliers
 
 data_clean <- na.omit(data)
 data_clean <- data_clean[data_clean$isla!="Salango",]
@@ -34,16 +35,23 @@ shp_file <- st_read("/Users/jaimeortiz/Library/CloudStorage/Box-Box/0_PhD_NINA/W
 # Convert the summarized data to a regular data frame for plotting with ggrepel
 points_df <- as.data.frame(data_with_count)
 
+my_palette <- c(
+  RIGHT = "#53051D",
+  Center = "#F12761",
+  LEFT = "#F2CE1B"
+)
+
 # Plot the shapefile as the base layer and the points on top
 map_plot <- ggplot() +
   geom_sf(data = shp_file) +
-  geom_point(data = points_df, aes(x = GPS_lon, y = GPS_lat, color = clust),position = position_jitter(width = 0.05, height = 0, seed = 123), alpha = 0.6, show.legend = T,size=2) +
+  geom_point(data = points_df, aes(x = GPS_lon, y = GPS_lat, color = new_Cluster),position = position_jitter(width = 0.05, height = 0, seed = 123), alpha = 0.85, show.legend = T,size=2) +
+  scale_color_manual(values = my_palette) +
   #ggrepel::geom_text_repel(data = points_df, aes(x = GPS_lon, y = GPS_lat), size = 2) +
   labs(x = "Longitude", y = "Latitude") +
   theme_minimal() +
   theme(panel.grid.major = element_line(color = "grey", size = 0.25, linetype = "dotted"),
         panel.grid.minor = element_line(color = "grey", size = 0.25, linetype = "dotted"),
-        legend.position = "top")
+        legend.position = "right")
 
 
 map_plot

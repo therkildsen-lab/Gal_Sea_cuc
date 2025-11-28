@@ -18,7 +18,7 @@ eigenValues <- read_delim("/Users/jaimeortiz/Library/CloudStorage/Box-Box/0_PhD_
 
 eigenVectors <- read_delim("/Users/jaimeortiz/Library/CloudStorage/Box-Box/0_PhD_NINA/WildGenome/SEA_CUCUMBER/Neutral_Gal_Only/full_neutral_genome_snp_plink_biallelic_snp_pca.eigenvec", delim = "\t", col_names = T) 
 
-env_data <- read_csv("/Users/jaimeortiz/Library/CloudStorage/Box-Box/0_PhD_NINA/WildGenome/SEA_CUCUMBER/Neutral_Gal_Only/sample_population_info.csv")
+env_data <- read_csv("/Users/jaimeortiz/Library/CloudStorage/Box-Box/0_PhD_NINA/WildGenome/SEA_CUCUMBER/GAL_MAINLAND_Analysis/new_combined_gal_mainland_pop_data.csv")
 
 ## Proportion of variation captured by each vector
 eigen_percent <- round((eigenValues / (sum(eigenValues))*100), 2)
@@ -31,10 +31,28 @@ eigen_env <- left_join(eigenVectors, env_data, by = "IID") |>
 
 #write_csv(eigen_env,"/Users/jaimeortiz/Library/CloudStorage/Box-Box/0_PhD_NINA/WildGenome/SEA_CUCUMBER/GAL_MAINLAND_Analysis/combined_gal_mainland_no_57_127_pca_env_data.csv")
 
+library(RColorBrewer)
+populations <- c('Central_SE', 'Far North', 'Mainland',  'Outlier', 'Northern', 'Western')
+my_palette <- setNames(brewer.pal(6, "Dark2"), populations)
+my_palette <- c(
+  Outlier = "#E41A1C",
+  Mainland = "#377EB8",
+  Northern = "#4DAF4A",
+  Western = "#984EA3",
+  Central_SE = "#FF7F00",
+  `Far North` = "#8c8c8c"
+)
+
+my_palette2 <- c(
+  RIGHT = "#53051D",
+  Center = "#F12761",
+  LEFT = "#F2CE1B"
+)
 
 #Plot PCA
-ggplot(data = eigen_env,mapping = aes(x = PC1, y = PC2, color = Cluster, shape = Bioregion)) +
-  geom_point(size = 3, show.legend = T ) +
+ggplot(data = eigen_env,mapping = aes(x = -PC1, y = PC2, color = new_Cluster)) +
+  geom_point(size = 3, show.legend = T,alpha=0.8 ) +
+  scale_color_manual(values = my_palette2) +
   geom_hline(yintercept = 0, linetype="dotted") +
   #geom_text(hjust=0, vjust=0,aes(label=IID)) +
   geom_vline(xintercept = 0, linetype="dotted") +
